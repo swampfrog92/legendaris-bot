@@ -137,7 +137,7 @@ model Faction {
   updatedAt DateTime @updatedAt
 
   @@unique([gameSystemId, name])
-  @@unique([gameSystemId, slug])
+  // @@unique([gameSystemId, slug])
   @@index([gameSystemId])
 }
 
@@ -197,7 +197,7 @@ model Match {
   winnerId      String?
   confirmedById String?
 
-  // status MatchStatus @default(PENDING)
+  status MatchStatus @default(PENDING)
 
   playedAt    DateTime
   confirmedAt DateTime?
