@@ -128,7 +128,7 @@ else if (name === 'results') {
   try{
     await prisma.match.create({
       data: {
-        gameSystemId: 1,
+        gameSystemId: "1",
         submittedById: userId,
         playerOneId: userId,
         playerTwoId: oppUserId,
@@ -136,9 +136,9 @@ else if (name === 'results') {
         playerTwoFactionId: "Space Marines",
         gameSystem: "Warhammer 40k",
         playedAt: '2026-07-28 18:30:00',
-        submittedBy: 1,
-        playerOne: 1,
-        playerTwo: 1
+        submittedBy: "1",
+        playerOne: "1",
+        playerTwo: "1"
 
       }
     })
