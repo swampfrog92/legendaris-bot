@@ -134,7 +134,7 @@ else if (name === 'results') {
         playerTwoId: '1',
         playerOneFactionId: '2',
         playerTwoFactionId: '1',
-        playedAt: '2026-07-28 18:30:00',
+        playedAt: new Date(),
       }
     });
     return res.send({
