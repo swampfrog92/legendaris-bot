@@ -128,6 +128,7 @@ else if (name === 'results') {
   try{
     await prisma.match.create({
       data: {
+        gameSystemId: 1,
         submittedById: userId,
         playerOneId: userId,
         playerTwoId: oppUserId,
