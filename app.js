@@ -134,7 +134,11 @@ else if (name === 'results') {
         playerOneFactionId: "Adeptus Mechanicus",
         playerTwoFactionId: "Space Marines",
         gameSystem: "Warhammer 40k",
-        playedAt: '2026-07-28 18:30:00'
+        playedAt: '2026-07-28 18:30:00',
+        submittedBy: 1,
+        playerOne: 1,
+        playerTwo: 1
+
       }
     })
     return res.send({
