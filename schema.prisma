@@ -1,0 +1,277 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CommunityRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+  OWNER
+}
+
+enum MatchStatus {
+  PENDING
+  CONFIRMED
+  DISPUTED
+  CANCELLED
+}
+
+enum CommunityStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id              String  @id @default(cuid())
+  discordId       String  @unique
+  discordUsername String
+  displayName     String?
+  avatarUrl       String?
+
+  communityMembers CommunityMember[]
+
+  submittedMatches Match[] @relation("SubmittedMatches")
+  playerOneMatches Match[] @relation("PlayerOneMatches")
+  playerTwoMatches Match[] @relation("PlayerTwoMatches")
+  wonMatches       Match[] @relation("WonMatches")
+  confirmedMatches Match[] @relation("ConfirmedMatches")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GameSystem {
+  id String @id @default(cuid())
+
+  name String @unique
+  slug String @unique
+
+  communities Community[]
+  matches     Match[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  factions  Faction[]
+}
+
+model Community {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+
+  status CommunityStatus @default(ACTIVE)
+
+  gameSystemId String
+
+  logoUrl        String?
+  bannerUrl      String?
+  discordGuildId String? @unique
+
+  gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
+
+  members CommunityMember[]
+  invites ChapterInvite[]
+  seasons Season[]
+  matches MatchCommunity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CommunityMember {
+  id String @id @default(cuid())
+
+  userId      String
+  communityId String
+
+  displayName String?
+  role        CommunityRole @default(MEMBER)
+  joinedAt    DateTime      @default(now())
+
+  lifetimeElo    Int @default(1000)
+  lifetimeWins   Int @default(0)
+  lifetimeLosses Int @default(0)
+  lifetimeDraws  Int @default(0)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  playerFactions PlayerFaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, communityId])
+  @@index([communityId])
+}
+
+model Faction {
+  id String @id @default(cuid())
+
+  gameSystemId String
+
+  name String
+  slug String
+
+  gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
+
+  playerFactions PlayerFaction[]
+
+  playerOneMatches Match[] @relation("PlayerOneFaction")
+  playerTwoMatches Match[] @relation("PlayerTwoFaction")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gameSystemId, name])
+  @@unique([gameSystemId, slug])
+  @@index([gameSystemId])
+}
+
+model PlayerFaction {
+  id String @id @default(cuid())
+
+  communityMemberId String
+  factionId         String
+
+  lifetimeElo    Int @default(1000)
+  lifetimeWins   Int @default(0)
+  lifetimeLosses Int @default(0)
+  lifetimeDraws  Int @default(0)
+
+  communityMember CommunityMember @relation(fields: [communityMemberId], references: [id], onDelete: Cascade)
+  faction         Faction         @relation(fields: [factionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([communityMemberId, factionId])
+  @@index([factionId])
+}
+
+model Season {
+  id String @id @default(cuid())
+
+  communityId String
+
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(false)
+
+  community Community        @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  matches   MatchCommunity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([communityId, name])
+  @@index([communityId, startDate])
+}
+
+model Match {
+  id String @id @default(cuid())
+
+  gameSystemId String
+
+  submittedById String
+  playerOneId   String
+  playerTwoId   String
+
+  playerOneFactionId String
+  playerTwoFactionId String
+
+  winnerId      String?
+  confirmedById String?
+
+  status MatchStatus @default(PENDING)
+
+  playedAt    DateTime
+  confirmedAt DateTime?
+
+  mission       String?
+  notes         String?
+  disputeReason String?
+
+  gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
+
+  submittedBy User  @relation("SubmittedMatches", fields: [submittedById], references: [id])
+  playerOne   User  @relation("PlayerOneMatches", fields: [playerOneId], references: [id])
+  playerTwo   User  @relation("PlayerTwoMatches", fields: [playerTwoId], references: [id])
+  winner      User? @relation("WonMatches", fields: [winnerId], references: [id])
+  confirmedBy User? @relation("ConfirmedMatches", fields: [confirmedById], references: [id])
+
+  playerOneFaction Faction @relation("PlayerOneFaction", fields: [playerOneFactionId], references: [id])
+  playerTwoFaction Faction @relation("PlayerTwoFaction", fields: [playerTwoFactionId], references: [id])
+
+  communities MatchCommunity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gameSystemId, playedAt])
+  @@index([playerOneId])
+  @@index([playerTwoId])
+  @@index([status])
+}
+
+model MatchCommunity {
+  id String @id @default(cuid())
+
+  matchId     String
+  communityId String
+  seasonId    String?
+
+  // Overall Chapter Elo snapshots
+  playerOneEloBefore Int?
+  playerOneEloAfter  Int?
+  playerTwoEloBefore Int?
+  playerTwoEloAfter  Int?
+
+  // Chapter-specific faction Elo snapshots
+  playerOneFactionEloBefore Int?
+  playerOneFactionEloAfter  Int?
+  playerTwoFactionEloBefore Int?
+  playerTwoFactionEloAfter  Int?
+
+  match     Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  season    Season?   @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([matchId, communityId])
+  @@index([communityId])
+  @@index([seasonId])
+}
+
+model ChapterInvite {
+  id String @id @default(cuid())
+
+  communityId String
+
+  code String @unique
+
+  active Boolean @default(true)
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([communityId])
+  @@index([code])
+}

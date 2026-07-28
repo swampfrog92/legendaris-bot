@@ -12,19 +12,15 @@ import { getRandomEmoji, DiscordRequest } from './utils.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 
-// Create an express app
 const app = express();
-// Get port, or default to 3000
 
-/*
 const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  host: process.env.PGHOST,
+  port: process.env.PGPORT,
+  database: process.env.PGDATABASE,
 });
-*/ 
 
 const PORT = process.env.PORT || 3000
 
@@ -46,7 +42,6 @@ client.login(process.env.DISCORD_TOKEN)
   .catch((err) => console.error('Login failed: ', err));
 
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
-  // Interaction id, type and data
 
   const { id, type, data } = req.body;
 
