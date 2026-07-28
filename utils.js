@@ -46,7 +46,7 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const faction_id = {
+export const faction_id = {
   SpaceMarines: "Space Marines",
   Admech: "Adeptus Mechanicus",
   Eldar: "Eldar",
