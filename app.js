@@ -11,16 +11,13 @@ import {
 import { getRandomEmoji, DiscordRequest } from './utils.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
+import {faction_id} from './utils.js';
+
+import { PrismaClient } from "@prisma/client";
+
+export const prisma = new PrismaClient();
 
 const app = express();
-
-const pool = new Pool({
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  host: process.env.PGHOST,
-  port: process.env.PGPORT,
-  database: process.env.PGDATABASE,
-});
 
 const PORT = process.env.PORT || 3000
 
@@ -129,12 +126,16 @@ else if (name === 'results') {
   const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
 
   try{
-    /*
-    await pool.query(
-      'INSERT INTO games (player_a, player_b, player_a_points, player_b_points) VALUES ($1, $2, $3, $4)',
-      [userId, oppUserId, yourVP, oppVP]
-    ); 
-    */
+    await prisma.match.create({
+      data: {
+        submittedById: userId,
+        playerOneId: userId,
+        playerTwoId: oppUserId,
+        playerOneFactionId: "Adeptus Mechanicus",
+        playerTwoFactionId: "Space Marines",
+        playedAt: '2026-07-28 18:30:00'
+      }
+    })
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
