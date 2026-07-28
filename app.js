@@ -133,6 +133,7 @@ else if (name === 'results') {
         playerTwoId: oppUserId,
         playerOneFactionId: "Adeptus Mechanicus",
         playerTwoFactionId: "Space Marines",
+        gameSystem: "Warhammer 40k",
         playedAt: '2026-07-28 18:30:00'
       }
     })
