@@ -135,9 +135,8 @@ else if (name === 'results') {
         playerOneFactionId: '2',
         playerTwoFactionId: '1',
         playedAt: '2026-07-28 18:30:00',
-
       }
-    })
+    });
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
