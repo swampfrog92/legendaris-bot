@@ -124,14 +124,14 @@ model Faction {
   gameSystemId String
 
   name String
-  slug String
+  // slug String
 
   gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
 
-  playerFactions PlayerFaction[]
+  // playerFactions PlayerFaction[]
 
-  playerOneMatches Match[] @relation("PlayerOneFaction")
-  playerTwoMatches Match[] @relation("PlayerTwoFaction")
+  // playerOneMatches Match[] @relation("PlayerOneFaction")
+  // playerTwoMatches Match[] @relation("PlayerTwoFaction")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -197,7 +197,7 @@ model Match {
   winnerId      String?
   confirmedById String?
 
-  status MatchStatus @default(PENDING)
+  // status MatchStatus @default(PENDING)
 
   playedAt    DateTime
   confirmedAt DateTime?
@@ -214,10 +214,10 @@ model Match {
   winner      User? @relation("WonMatches", fields: [winnerId], references: [id])
   confirmedBy User? @relation("ConfirmedMatches", fields: [confirmedById], references: [id])
 
-  playerOneFaction Faction @relation("PlayerOneFaction", fields: [playerOneFactionId], references: [id])
-  playerTwoFaction Faction @relation("PlayerTwoFaction", fields: [playerTwoFactionId], references: [id])
+  // playerOneFaction Faction @relation("PlayerOneFaction", fields: [playerOneFactionId], references: [id])
+  // playerTwoFaction Faction @relation("PlayerTwoFaction", fields: [playerTwoFactionId], references: [id])
 
-  communities MatchCommunity[]
+  // communities MatchCommunity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
