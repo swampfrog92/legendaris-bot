@@ -42,22 +42,55 @@ const RESULTS_COMMAND = {
   options: [
     {
       type: 6,
-      name: 'opp',
+      name: 'opponent',
       description: 'Your opponent in the game',
       required: true
     },
     {
       type: 4,
-      name: 'playervp',
+      name: 'your_vp',
       description: 'Your victory points',
       required: true
     },
     {
       type: 4,
-      name: 'oppvp',
+      name: 'opponent_vp',
       description: 'Your opponents victory points',
       required: true
+    },
+    {
+      type: 3,
+      name: 'faction',
+      description: 'Your faction',
+      required: true,
+      choices: [
+        {
+          name: 'Space Marines',
+          value: '1',
+        },
+        {
+          name: 'Orks',
+          value: '2',
+        }
+      ]
+    },
+    {
+      type: 3,
+      name: 'opponent_faction',
+      description: 'Your opponents faction',
+      required: true,
+      choices: [
+        {
+          name: 'Space Marines',
+          value: '1',
+        },
+        {
+          name: 'Orks',
+          value: '2',
+        }
+      ]
     }
+
   ]
 };
 

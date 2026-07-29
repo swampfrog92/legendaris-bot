@@ -120,23 +120,62 @@ else if (name === 'notify') {
 }
 
 else if (name === 'results') {
-  const oppUserId = req.body.data.options?.find(opt => opt.name === 'opp')?.value;
-  const yourVP = req.body.data.options?.find(opt => opt.name === 'playervp')?.value;
-  const oppVP = req.body.data.options?.find(opt => opt.name === 'oppvp')?.value;
+  const oppUserId = req.body.data.options?.find(opt => opt.name === 'opponent')?.value;
+  const yourVP = req.body.data.options?.find(opt => opt.name === 'your_vp')?.value;
+  const oppVP = req.body.data.options?.find(opt => opt.name === 'opponent_vp')?.value;
+  const yourFaction = req.body.data.options?.find(opt => opt.name === 'faction')?.value;
+  const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
   const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
 
+  // Determines the winner. In case of a tie, '-1'
+  const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
+
   try{
+    // Searches the database to find the unique ID of the player
+      const userDbId = (await prisma.user.findUnique({
+      where: {
+        discordId: userId
+      },
+      select: {
+        id: true
+      }
+    }))?.id;
+
+    // Searches the database to find the unique ID of the opponent
+    const oppUserDbId = (await prisma.user.findUnique({
+      where: {
+        discordId: oppUserId
+      },
+      select: {
+        id: true
+      }
+    }))?.id;
+
+    // Searches the database to find the unique ID of the winner. If no winner is found, it is submitted as '-1'
+    const winnerDbId = (await prisma.user.findUnique({
+      where: {
+        discordId: winner
+      },
+      select: {
+        id: true
+      }
+    }))?.id ?? '-1';    
+
+    // submit to DB
     await prisma.match.create({
       data: {
         gameSystemId: '1',
-        submittedById: '1',
-        playerOneId: '1',
-        playerTwoId: '1',
-        playerOneFactionId: '2',
-        playerTwoFactionId: '1',
+        submittedById: userDbId,
+        playerOneId: userDbId,
+        playerTwoId: oppUserDbId,
+        winnerId: winnerDbId,
+        playerOneFactionId: yourFaction,
+        playerTwoFactionId: oppFaction,
         playedAt: new Date(),
       }
     });
+
+    // Upon success, display the results on the guild server. 
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
