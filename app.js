@@ -11,7 +11,8 @@ import {
 import { getRandomEmoji, DiscordRequest } from './utils.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
-import {faction_id, slugify} from './utils.js';
+import { faction_id } from './utils.js';
+import { slugify } from './utils.js';
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
@@ -100,7 +101,7 @@ else if (name === 'create_chapter'){
         name: chapterName,
         slug: slugify(chapterName),
         gameSystemId: 1,
-        
+
       }
     });
   } catch (err){
