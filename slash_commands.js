@@ -212,7 +212,6 @@ export async function join_request(res, req) {
                 data: {
                     discordId: userId,
                     discordUsername: req.body.member?.user?.username ?? req.body.user?.username,
-                    playedAt: new Date(),
                 }
             });
         }
@@ -225,7 +224,6 @@ export async function join_request(res, req) {
                     userId: userDbId,
                     communityId: 'cms6g007x0001lo0psadsm3w7',
                     displayName: req.body.member?.user?.username ?? req.body.user?.username,
-                    playedAt: new Date(),
                 }
             });
             return res.send({
