@@ -1,5 +1,13 @@
 import { PrismaClient } from "./generated/prisma/client.js";
-
+import 'dotenv/config';
+import {
+  ButtonStyleTypes,
+  InteractionResponseFlags,
+  InteractionResponseType,
+  InteractionType,
+  MessageComponentTypes,
+  verifyKeyMiddleware,
+} from 'discord-interactions';
 export const prisma = new PrismaClient();
 
 export function rank_request(res) {
