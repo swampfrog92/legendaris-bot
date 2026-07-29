@@ -11,7 +11,7 @@ import {
 import { getRandomEmoji, DiscordRequest } from './utils.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
-import {faction_id} from './utils.js';
+import {faction_id, slugify} from './utils.js';
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
@@ -92,6 +92,21 @@ else if (name === 'rank') {
     },
   });
 }
+else if (name === 'create_chapter'){
+  const chapterName = req.body.data.options?.find(opt => opt.name === 'chapter_name')?.value;
+  try{
+    await prisma.community.create({
+      data: {
+        name: chapterName,
+        slug: slugify(chapterName),
+        gameSystemId: 1,
+        
+      }
+    });
+  } catch (err){
+  console.error('Database error while creating chapter: ', err);
+  }
+} 
 
 else if (name === 'notify') {
 

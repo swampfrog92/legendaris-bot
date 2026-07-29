@@ -94,6 +94,23 @@ const RESULTS_COMMAND = {
   ]
 };
 
-const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, NOTIFY_COMMAND, RESULTS_COMMAND];
+const CREATE_CHAPTER_COMMAND = {
+  name: 'create_chapter',
+  description: 'Create a new chapter for your faction',
+  type: 1,
+  integration_types: [0,1],
+  contexts: [0,1,2],
+  options: 
+  [{
+  name: "name",
+  description: "Name of your chapter, between 3 and 32 characters",
+  type: 3, // STRING
+  required: true,
+  min_length: 3,
+  max_length: 32
+  }]
+};
+
+const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, NOTIFY_COMMAND, RESULTS_COMMAND, CREATE_CHAPTER_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
