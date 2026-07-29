@@ -205,7 +205,7 @@ export async function join_request(res, req) {
     let userDbId;
     try{
         if (await prisma.user.findUnique({ where: { discordId: userId } })) {
-            userDbId = await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } }).id;
+            userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } })).id;
         }
         else{
             await prisma.user.create({
@@ -216,8 +216,8 @@ export async function join_request(res, req) {
                 }
             });
         }
-        if (await prisma.communityMember.findUnique({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
-            userDbId = await prisma.communityMember.findUnique({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } }).id;
+        if (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
+            userDbId = (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
         }
         else{
             await prisma.communityMember.create({
