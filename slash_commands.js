@@ -215,13 +215,27 @@ export async function join_request(res, req) {
                 }
             });
         }
+        // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
         if (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
             userDbId = (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
+                        return res.send({
+                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+                components: [
+                    {
+                    type: MessageComponentTypes.TEXT_DISPLAY,
+                    content: `You are already a member of this chapter, <@${userId}>!`
+                    }
+                ]
+                },
+            });
         }
         else{
             await prisma.communityMember.create({
                 data: {
                     userId: userDbId,
+                    // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
                     communityId: 'cms6g007x0001lo0psadsm3w7',
                     displayName: req.body.member?.user?.username ?? req.body.user?.username,
                 }
