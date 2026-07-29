@@ -191,7 +191,7 @@ export async function results_request(res, req) {
             }
         });
 
-        const communtiyName = (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name;
+        const communityName = (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name;
         notify_user_of_match(oppUserId, communityName);
 
         // Upon success, display the results on the guild server. 
