@@ -202,7 +202,7 @@ export async function notify_request(res, req) {
 
 export async function join_request(res, req) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
-    const userDbId;
+    let userDbId;
     try{
         if (await prisma.user.findUnique({ where: { discordId: userId } })) {
             userDbId = await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } }).id;
