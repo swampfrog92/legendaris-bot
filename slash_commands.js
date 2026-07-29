@@ -8,6 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie } from './elo.js';
 export const prisma = new PrismaClient();
 
 export function rank_request(res) {
@@ -131,7 +132,7 @@ export async function results_request(res, req) {
         }))?.id ?? '-1';    
 
         // submit to DB
-        await prisma.match.create({
+        const matchId = (await prisma.match.create({
             data: {
                 gameSystemId: '1',
                 submittedById: userDbId,
@@ -141,6 +142,50 @@ export async function results_request(res, req) {
                 playerOneFactionId: yourFaction,
                 playerTwoFactionId: oppFaction,
                 playedAt: new Date(),
+            }
+        }))?.id;
+
+        const playerOne = (await prisma.communityMember.findFirst({
+            where: {
+                userId: userDbId,
+                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for now, but will be dynamic in the future
+            }
+        }));
+            const playerTwo = (await prisma.communityMember.findFirst({
+            where: {
+                userId: oppUserDbId,
+                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for now, but will be dynamic in the future
+            }
+        }));
+
+        const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne, playerTwo) : yourVP < oppVP ? adjustEloForDefeat(playerOne, playerTwo) : adjustEloForTie(playerOne, playerTwo);
+        const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo, playerOne) : yourVP > oppVP ? adjustEloForDefeat(playerTwo, playerOne) : adjustEloForTie(playerTwo, playerOne);
+        await prisma.matchCommunity.create({
+            data: {
+                matchId: matchId,
+                communityId: 'cms6g007x0001lo0psadsm3w7', // Hardcoded for now, but will be dynamic in the future
+                playerOneEloBefore: playerOne.lifetimeElo,
+                playerTwoEloBefore: playerTwo.lifetimeElo,
+                playerOneEloAfter: playerOneNewElo,
+                playerTwoEloAfter: playerTwoNewElo,
+            }
+        });
+
+        await prisma.communityMember.update({
+            where: {
+                id: playerOne.id
+            },
+            data: {
+                lifetimeElo: playerOneNewElo
+            }
+        });
+
+        await prisma.communityMember.update({
+            where: {
+                id: playerTwo.id
+            },
+            data: {
+                lifetimeElo: playerTwoNewElo
             }
         });
 
