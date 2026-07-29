@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { getRandomEmoji, DiscordRequest } from './utils.js';
+import { DiscordRequest } from './utils.js';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';

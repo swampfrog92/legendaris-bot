@@ -174,7 +174,7 @@ export async function results_request(res, req) {
     }
 }
 
-export async function notify_requests(res, req) {
+export async function notify_request(res, req) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     try {
 
