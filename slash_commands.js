@@ -17,7 +17,7 @@ export function rank_request(res) {
   });
 }
 
-export function create_chapter_request(res, req){
+export async function create_chapter_request(res, req){
       const chapterName = req.body.data.options?.find(opt => opt.name === 'name')?.value;
   try{
     await prisma.community.create({
