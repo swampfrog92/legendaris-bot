@@ -216,7 +216,7 @@ export async function join_request(res, req) {
             });
         }
         // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
-        if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })).id) {
+        if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } }))?.id) {
             userDbId = (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
                         return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
