@@ -1,3 +1,7 @@
+import { PrismaClient } from "./generated/prisma/client.js";
+
+export const prisma = new PrismaClient();
+
 export function rank_request(res) {
     return res.send({
     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
