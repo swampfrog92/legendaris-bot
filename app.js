@@ -13,7 +13,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
-import { rank_request, create_chapter_request, info_request, help_request } from './slash_commands.js';
+import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request } from './slash_commands.js';
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
@@ -50,7 +50,6 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name } = data;
-    const userId = req.body.member?.user?.id ?? req.body.user?.id;
 
     if (name === 'help') {
       return help_request(res);
@@ -67,117 +66,13 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       return create_chapter_request(res, req);
     } 
 
-else if (name === 'notify') {
+    else if (name === 'notify') {
+      return notify_request(res, req);
+    }
 
-  try {
-
-    const user = await client.users.fetch(userId, {force:true});
-    await user.send('This is a DM from the bot!');
-
-    return res.send({
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-      data: {
-        content: 'Check your DMs!',
-      },
-    });
-  } catch (err) {
-    console.error('Failed to send DM:', err);
-    return res.send({
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: {
-        flags: InteractionResponseFlags.EPHEMERAL,
-        content: "I couldn't DM you — you might have DMs disabled for this server.",
-      },
-    });
-  }
-}
-
-else if (name === 'results') {
-  const oppUserId = req.body.data.options?.find(opt => opt.name === 'opponent')?.value;
-  const yourVP = req.body.data.options?.find(opt => opt.name === 'your_vp')?.value;
-  const oppVP = req.body.data.options?.find(opt => opt.name === 'opponent_vp')?.value;
-  const yourFaction = req.body.data.options?.find(opt => opt.name === 'faction')?.value;
-  const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
-  const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
-
-  // Determines the winner. In case of a tie, '-1'
-  const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
-
-  try{
-    // Searches the database to find the unique ID of the player
-      const userDbId = (await prisma.user.findUnique({
-      where: {
-        discordId: userId
-      },
-      select: {
-        id: true
+      else if (name === 'results') {
+        return results_request(res, req);
       }
-    }))?.id;
-
-    // Searches the database to find the unique ID of the opponent
-    const oppUserDbId = (await prisma.user.findUnique({
-      where: {
-        discordId: oppUserId
-      },
-      select: {
-        id: true
-      }
-    }))?.id;
-
-    // Searches the database to find the unique ID of the winner. If no winner is found, it is submitted as '-1'
-    const winnerDbId = (await prisma.user.findUnique({
-      where: {
-        discordId: winner
-      },
-      select: {
-        id: true
-      }
-    }))?.id ?? '-1';    
-
-    // submit to DB
-    await prisma.match.create({
-      data: {
-        gameSystemId: '1',
-        submittedById: userDbId,
-        playerOneId: userDbId,
-        playerTwoId: oppUserDbId,
-        winnerId: winnerDbId,
-        playerOneFactionId: yourFaction,
-        playerTwoFactionId: oppFaction,
-        playedAt: new Date(),
-      }
-    });
-
-    // Upon success, display the results on the guild server. 
-    return res.send({
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-        components: [
-          {
-            type: MessageComponentTypes.TEXT_DISPLAY,
-            content: `This will display the result: <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}. The winner is: <@${victoryMessage}>`
-          }
-        ]
-      },
-    });
-  } catch (err){
-    console.error('Database error while submitting results: ', err);
-    return res.send({
-      type: InteractionResponseFlags.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-        components: [
-          {
-            type: MessageComponentTypes.TEXT_DISPLAY,
-            content: 'Error while submitting your results. Please try again later. Contact support team if problem persists.'
-          }
-        ]
-      }
-    })
-  }
-}
 
     console.error(`unknown command: ${name}`);
     return res.status(400).json({ error: 'unknown command' });
