@@ -13,6 +13,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
+import { rank_request, create_chapter_request, info_request, help_request } from './slash_commands.js';
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
@@ -52,62 +53,19 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
 
     if (name === 'help') {
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-          components: [
-            {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              content: `This will be a message explaining the instructions on how to use this bot.`
-            }
-          ]
-        },
-      });
+      return help_request(res);
     }
-        else if (name === 'info') {
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-          components: [
-            {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              content: `This will be a message explaining the information regarding the league status`
-            }
-          ]
-        },
-      });
+    else if (name === 'info') {
+      return info_request(res);
     }
-else if (name === 'rank') {
-  return res.send({
-    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-    data: {
-      flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-      components: [
-        {
-          type: MessageComponentTypes.TEXT_DISPLAY,
-          content: `This will display the user's rank for: ${userId}`
-        }
-      ]
-    },
-  });
-}
-else if (name === 'create_chapter'){
-  const chapterName = req.body.data.options?.find(opt => opt.name === 'name')?.value;
-  try{
-    await prisma.community.create({
-      data: {
-        name: chapterName,
-        slug: slugify(chapterName),
-        gameSystemId: '1',
 
-      }
-    });
-  } catch (err){
-  console.error('Database error while creating chapter: ', err);
-  }
-} 
+    else if (name === 'rank') {
+      return rank_request(res);
+    }
+
+    else if (name === 'create_chapter'){
+      return create_chapter_request(res, req);
+    } 
 
 else if (name === 'notify') {
 
