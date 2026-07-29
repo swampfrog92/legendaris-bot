@@ -111,6 +111,14 @@ const CREATE_CHAPTER_COMMAND = {
     }]
 };
 
-const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, NOTIFY_COMMAND, RESULTS_COMMAND, CREATE_CHAPTER_COMMAND];
+const JOIN_COMMAND = {
+  name: 'join',
+  description: 'Join this chapter!',
+  type: 1,
+  integration_types: [0, 1],
+  contexts: [0, 1, 2],
+};
+
+const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, NOTIFY_COMMAND, RESULTS_COMMAND, CREATE_CHAPTER_COMMAND, JOIN_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);

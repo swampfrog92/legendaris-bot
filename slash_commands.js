@@ -132,16 +132,16 @@ export async function results_request(res, req) {
 
         // submit to DB
         await prisma.match.create({
-        data: {
-            gameSystemId: '1',
-            submittedById: userDbId,
-            playerOneId: userDbId,
-            playerTwoId: oppUserDbId,
-            winnerId: winnerDbId,
-            playerOneFactionId: yourFaction,
-            playerTwoFactionId: oppFaction,
-            playedAt: new Date(),
-        }
+            data: {
+                gameSystemId: '1',
+                submittedById: userDbId,
+                playerOneId: userDbId,
+                playerTwoId: oppUserDbId,
+                winnerId: winnerDbId,
+                playerOneFactionId: yourFaction,
+                playerTwoFactionId: oppFaction,
+                playedAt: new Date(),
+            }
         });
 
         // Upon success, display the results on the guild server. 
@@ -195,6 +195,59 @@ export async function notify_request(res, req) {
         data: {
             flags: InteractionResponseFlags.EPHEMERAL,
             content: "I couldn't DM you — you might have DMs disabled for this server.",
+        },
+        });
+    }
+}
+
+export async function join_request(res, req) {
+    const userId = req.body.member?.user?.id ?? req.body.user?.id;
+    const userDbId;
+    try{
+        if (await prisma.user.findUnique({ where: { discordId: userId } })) {
+            userDbId = await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } }).id;
+        }
+        else{
+            await prisma.user.create({
+                data: {
+                    discordId: userId,
+                    discordUsername: req.body.member?.user?.username ?? req.body.user?.username,
+                    playedAt: new Date(),
+                }
+            });
+        }
+        if (await prisma.communitymember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
+            userDbId = await prisma.communitymember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } }).id;
+        }
+        else{
+            await prisma.communitymember.create({
+                data: {
+                    userId: userDbId,
+                    communityId: 'cms6g007x0001lo0psadsm3w7',
+                    displayName: req.body.member?.user?.username ?? req.body.user?.username,
+                    playedAt: new Date(),
+                }
+            });
+            return res.send({
+                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+                components: [
+                    {
+                    type: MessageComponentTypes.TEXT_DISPLAY,
+                    content: `You have successfully joined the chapter! Welcome aboard, <@${userId}>!`
+                    }
+                ]
+                },
+            });
+        }
+    } catch (err){
+        console.error('Database error while joining chapter: ', err);
+        return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            flags: InteractionResponseFlags.EPHEMERAL,
+            content: "Error while joining the chapter. Please try again later. Contact support team if problem persists.",
         },
         });
     }

@@ -13,7 +13,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
-import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request } from './slash_commands.js';
+import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request } from './slash_commands.js';
 
 const app = express();
 
@@ -72,6 +72,10 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     else if (name === 'results') {
       return results_request(res, req);
+    }
+    
+    else if (name === 'join') {
+      return join_request(res, req);
     }
 
     // End of slash command handling
