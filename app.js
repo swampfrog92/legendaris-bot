@@ -71,7 +71,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
 
     else if (name === 'results') {
-      return results_request(res, req);
+      return results_request(res, req, client);
     }
     
     else if (name === 'join') {

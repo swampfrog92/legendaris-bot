@@ -90,7 +90,7 @@ export function help_request(res) {
     });
 }
 
-export async function results_request(res, req) {
+export async function results_request(res, req, client) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     const oppUserId = req.body.data.options?.find(opt => opt.name === 'opponent')?.value;
     const yourVP = req.body.data.options?.find(opt => opt.name === 'your_vp')?.value;
@@ -192,7 +192,7 @@ export async function results_request(res, req) {
         });
 
         const communityName = (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name;
-        notify_user_of_match(oppUserId, communityName);
+        notify_user_of_match(oppUserId, communityName, client);
 
         // Upon success, display the results on the guild server. 
         return res.send({
