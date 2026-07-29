@@ -100,7 +100,7 @@ else if (name === 'create_chapter'){
       data: {
         name: chapterName,
         slug: slugify(chapterName),
-        gameSystemId: 1,
+        gameSystemId: '1',
 
       }
     });
