@@ -9,6 +9,8 @@ import {
   verifyKeyMiddleware,
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie } from './elo.js';
+import { notify_user_of_match } from './messages.js';
+
 export const prisma = new PrismaClient();
 
 export function rank_request(res) {
@@ -148,13 +150,13 @@ export async function results_request(res, req) {
         const playerOne = (await prisma.communityMember.findFirst({
             where: {
                 userId: userDbId,
-                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for now, but will be dynamic in the future
+                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for testing purposes
             }
         }));
             const playerTwo = (await prisma.communityMember.findFirst({
             where: {
                 userId: oppUserDbId,
-                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for now, but will be dynamic in the future
+                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for testing purposes
             }
         }));
 
@@ -163,7 +165,7 @@ export async function results_request(res, req) {
         await prisma.matchCommunity.create({
             data: {
                 matchId: matchId,
-                communityId: 'cms6g007x0001lo0psadsm3w7', // Hardcoded for now, but will be dynamic in the future
+                communityId: 'cms6g007x0001lo0psadsm3w7', // Hardcoded for testing purposes
                 playerOneEloBefore: playerOne.lifetimeElo,
                 playerTwoEloBefore: playerTwo.lifetimeElo,
                 playerOneEloAfter: playerOneNewElo,
@@ -188,6 +190,9 @@ export async function results_request(res, req) {
                 lifetimeElo: playerTwoNewElo
             }
         });
+
+        const communtiyName = (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name;
+        notify_user_of_match(oppUserId, communityName);
 
         // Upon success, display the results on the guild server. 
         return res.send({
