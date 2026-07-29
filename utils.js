@@ -54,3 +54,12 @@ export const faction_id = {
   Tyranids: "Tyranids",
   ImperialGuard: "Imperial Guard"
 };
+
+export function slugify(str) {
+    return str
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+}
