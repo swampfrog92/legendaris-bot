@@ -15,21 +15,18 @@ import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
 import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request } from './slash_commands.js';
 
-import { PrismaClient } from "./generated/prisma/client.js";
-
-export const prisma = new PrismaClient();
-
 const app = express();
 
+// Client login
 const PORT = process.env.PORT || 3000
 
-  const client = new Client({
+const client = new Client({
   intents: [GatewayIntentBits.Guilds],
-  });
+});
 
-  client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);
 
-  client.once('ready', () => {
+client.once('ready', () => {
   console.log('Logged in: ${client.user.tag}');
 });
 
@@ -40,6 +37,8 @@ client.login(process.env.DISCORD_TOKEN)
   .then(() => console.log('login() resolved'))
   .catch((err) => console.error('Login failed: ', err));
 
+
+// This is the endpoint that Discord will send interaction data to
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
 
   const { id, type, data } = req.body;
@@ -48,6 +47,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     return res.send({ type: InteractionResponseType.PONG });
   }
 
+  // All slash commands are handled here.
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name } = data;
 
@@ -70,15 +70,17 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       return notify_request(res, req);
     }
 
-      else if (name === 'results') {
-        return results_request(res, req);
-      }
+    else if (name === 'results') {
+      return results_request(res, req);
+    }
+
+    // End of slash command handling
 
     console.error(`unknown command: ${name}`);
     return res.status(400).json({ error: 'unknown command' });
   }
 
-  console.error('unknown interaction type', type);
+console.error('unknown interaction type', type);
   return res.status(400).json({ error: 'unknown interaction type' });
 });
 
