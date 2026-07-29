@@ -216,11 +216,11 @@ export async function join_request(res, req) {
                 }
             });
         }
-        if (await prisma.communitymember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
-            userDbId = await prisma.communitymember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } }).id;
+        if (await prisma.communityMember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } })) {
+            userDbId = await prisma.communityMember.findUnique({ where: { discordId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } }).id;
         }
         else{
-            await prisma.communitymember.create({
+            await prisma.communityMember.create({
                 data: {
                     userId: userDbId,
                     communityId: 'cms6g007x0001lo0psadsm3w7',
