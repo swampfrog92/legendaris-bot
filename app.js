@@ -94,7 +94,7 @@ else if (name === 'rank') {
   });
 }
 else if (name === 'create_chapter'){
-  const chapterName = req.body.data.options?.find(opt => opt.name === 'chapter_name')?.value;
+  const chapterName = req.body.data.options?.find(opt => opt.name === 'name')?.value;
   try{
     await prisma.community.create({
       data: {

@@ -101,14 +101,14 @@ const CREATE_CHAPTER_COMMAND = {
   integration_types: [0,1],
   contexts: [0,1,2],
   options: 
-  [{
-  name: "name",
-  description: "Name of your chapter, between 3 and 32 characters",
-  type: 3, // STRING
-  required: true,
-  min_length: 3,
-  max_length: 32
-  }]
+    [{
+    name: "name",
+    description: "Name of your chapter, between 3 and 32 characters",
+    type: 3, // STRING
+    required: true,
+    min_length: 3,
+    max_length: 32
+    }]
 };
 
 const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, NOTIFY_COMMAND, RESULTS_COMMAND, CREATE_CHAPTER_COMMAND];
