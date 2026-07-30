@@ -14,6 +14,7 @@ import { helpMessage } from './text.js';
 
 export const prisma = new PrismaClient();
 
+
 // These commands are called when the system receives a slash command. See ./app.js. 
 export async function rank_request(res, req) {
 
