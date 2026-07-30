@@ -33,18 +33,14 @@ export async function rank_request(res) {
         community = sortLeaderboard(community);
         const userRank = findRank(community, req.body.member?.user?.username ?? req.body.user?.username) ?? 'Cannot find username';
 
+
         return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-        components: [
-            {
-            type: MessageComponentTypes.TEXT_DISPLAY,
-            content: `Your current rank is ${userRank}`
-            }
-        ]
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            data: {
+            content: 'Your current rank is ${userRank}',
         },
-    });
+        });
     } catch (err){
         console.error('Database error while fetching rank: ', err);
     }
