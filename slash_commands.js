@@ -13,6 +13,7 @@ import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
 
+// These commands are called when the system receives a slash command. See ./app.js. 
 export async function rank_request(res, req) {
 
     try{
@@ -94,6 +95,48 @@ export function info_request(res) {
           ]
         },
     });
+}
+
+export function leaderboard_request(res, req){
+    try{
+        const msg = "Current Leaderboard: \n";
+        let community = await prisma.community.findUnique({
+            where: {
+                id: 'cms6g007x0001lo0psadsm3w7',
+            },
+            select: {
+                members: {
+                    select: {
+                        displayName: true,
+                        lifetimeElo: true,
+                        userId: true
+                    },
+                    orderBy: {
+                        lifetimeElo: "desc"
+                    }
+                }
+            }
+        });
+        const leaderboardLength = community.members.length > 10 ? 10 : community.members.length;
+        for(i = 0; i < leaderboardLength; i++){
+            msg += "${i + 1}. ${community.members[i].displayName} --- ${community.members[i].lifetimeElo}";
+        }
+
+        return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+        flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+          components: [
+            {
+              type: MessageComponentTypes.TEXT_DISPLAY,
+              content: msg
+            }
+          ]
+        },
+    });
+    } catch(err){
+        console.log('Error while creating leaderboard');
+    }
 }
 
 export function help_request(res) {
@@ -257,10 +300,12 @@ export async function join_request(res, req) {
                 }
             }))?.id;
         }
+        console (userDbId);
+        
         // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
-        if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } }))?.id) {
+        if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select : {id : true} }))?.id) {
             userDbId = (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
-                        return res.send({
+                return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
                 flags: InteractionResponseFlags.IS_COMPONENTS_V2,
