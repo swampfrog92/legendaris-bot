@@ -13,7 +13,7 @@ import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
 
-export function rank_request(res) {
+export async function rank_request(res) {
 
     try{
         const community = await prisma.community.findUnique({
