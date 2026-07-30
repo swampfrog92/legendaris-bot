@@ -13,14 +13,14 @@ import { PrismaClient } from "./generated/prisma/client.js";
 export function adjustEloForVictory(playerOneElo, playerTwoElo){
     const k = 32;
     let expectedWinner = 1 / (1 + Math.pow(10, (playerTwoElo - playerOneElo) / 400));
-    return winnerElo + k * (1 - expectedWinner);
+    return playerOneElo + k * (1 - expectedWinner);
 }
 
 // Takes two ints as an argument, and returns the new elo for the player.
 export function adjustEloForDefeat(playerOneElo, playerTwoElo){
     const k = 32;
     let expectedWinner = 1 / (1 + Math.pow(10, (playerTwoElo - playerOneElo) / 400));
-    return loserElo + k * (0 - expectedWinner);
+    return playerOneElo + k * (0 - expectedWinner);
 }
 
 // Takes two ints as an argument, and returns the new elo for the player.
