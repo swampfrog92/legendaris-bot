@@ -16,6 +16,7 @@ export const prisma = new PrismaClient();
 export async function rank_request(res, req) {
 
     try{
+        const userId = await prisma.user.findUnique({ where: { discordId: req.body.member?.user?.id ?? req.body.user?.id }, select: { id: true } });
         let community = await prisma.community.findUnique({
             where: {
                 id: 'cms6g007x0001lo0psadsm3w7',
@@ -24,14 +25,15 @@ export async function rank_request(res, req) {
                 members: {
                     select: {
                         displayName: true,
-                        lifetimeElo: true
+                        lifetimeElo: true,
+                        userId: true
                     }
                 }
             }
         });
 
         community = sortLeaderboard(community);
-        const userRank = findRank(community, req.body.member?.user?.username ?? req.body.user?.username) ?? 'Cannot find username';
+        const userRank = findRank(community, userId);
 
 
         return res.send({

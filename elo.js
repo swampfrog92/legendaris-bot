@@ -35,6 +35,6 @@ export async function sortLeaderboard(community){
     return community.members.sort((a, b) => b.lifetimeElo - a.lifetimeElo);
 }
 
-export function findRank (leaderboard, username){
-    return leaderboard.members.findIndex(member => member.displayName === username) + 1;
+export function findRank (leaderboard, userId){
+    return leaderboard.members.findIndex(member => member.userId === userId) + 1;
 }
