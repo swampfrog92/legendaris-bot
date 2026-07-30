@@ -43,82 +43,84 @@ export function findElo (leaderboard, userId){
 }
 
 export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, oppVP, playerFactionId, oppFactionId){
-
-    const playerOneFaction = await prisma.playerFaction.upsert({
-        where: {
-            communityMemberId: playerOne.id,
-            factionId:
-            playerFactionId
-        },
-        update: {},
-        create: {
-            communityMemberId: playerOne.id,
-            factionId: playerFactionId,
-            lifetimeElo: 1000
-        }
-    });
-
-    const playerTwoFaction = await prisma.playerFaction.upsert({
-        where: {
-            communityMemberId: playerTwo.id,
-            factionId: oppFactionId
-        },
-        update: {},
-        create: {
-            communityMemberId: playerTwo.id,
-            factionId: oppFactionId,
-            lifetimeElo: 1000
-        }
-    });
-
-    const playerOneMatchDelta = {
-        winsDelta: playerVP > oppVP ? 1 : 0,
-        lossesDelta: playerVP < oppVP ? 1 : 0,
-        drawsDelta: playerVP === oppVP ? 1 : 0,
-    }
-    const playerTwoMatchDelta = {
-        winsDelta: playerVP < oppVP ? 1 : 0,
-        lossesDelta: playerVP > oppVP ? 1 : 0,
-        drawsDelta: playerVP === oppVP ? 1 : 0,
-    }
-
-    playerOneFaction.lifetimeElo += playerVP > oppVP ? adjustEloForVictory(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : adjustEloForTie(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo);
-    playerTwoFaction.lifetimeElo += playerVP < oppVP ? adjustEloForVictory(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : adjustEloForTie(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo);
-
-    await prisma.playerFaction.update({
-        where: {
-            id: playerOneFaction.id
-        },
-        data: {
-            lifetimeElo: playerOneFaction.lifetimeElo,
-            lifetimeWins: {
-                increment: playerOneMatchDelta.winsDelta
+    try{
+        const playerOneFaction = await prisma.playerFaction.upsert({
+            where: {
+                communityMemberId: playerOne.id,
+                factionId:
+                playerFactionId
             },
-            lifetimeLosses: {
-                increment: playerOneMatchDelta.lossesDelta
-            },
-            lifetimeDraws: {
-                increment: playerOneMatchDelta.drawsDelta
+            update: {},
+            create: {
+                communityMemberId: playerOne.id,
+                factionId: playerFactionId,
+                lifetimeElo: 1000
             }
+        });
+
+        const playerTwoFaction = await prisma.playerFaction.upsert({
+            where: {
+                communityMemberId: playerTwo.id,
+                factionId: oppFactionId
+            },
+            update: {},
+            create: {
+                communityMemberId: playerTwo.id,
+                factionId: oppFactionId,
+                lifetimeElo: 1000
+            }
+        });
+
+        const playerOneMatchDelta = {
+            winsDelta: playerVP > oppVP ? 1 : 0,
+            lossesDelta: playerVP < oppVP ? 1 : 0,
+            drawsDelta: playerVP === oppVP ? 1 : 0,
         }
-    });
-    
+        const playerTwoMatchDelta = {
+            winsDelta: playerVP < oppVP ? 1 : 0,
+            lossesDelta: playerVP > oppVP ? 1 : 0,
+            drawsDelta: playerVP === oppVP ? 1 : 0,
+        }
+
+        playerOneFaction.lifetimeElo += playerVP > oppVP ? adjustEloForVictory(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : adjustEloForTie(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo);
+        playerTwoFaction.lifetimeElo += playerVP < oppVP ? adjustEloForVictory(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : adjustEloForTie(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo);
+
         await prisma.playerFaction.update({
-        where: {
-            id: playerTwoFaction.id
-        },
-        data: {
-            lifetimeElo: playerTwoFaction.lifetimeElo,
-            lifetimeWins: {
-                increment: playerTwoMatchDelta.winsDelta
+            where: {
+                id: playerOneFaction.id
             },
-            lifetimeLosses: {
-                increment: playerTwoMatchDelta.lossesDelta
-            },
-            lifetimeDraws: {
-                increment: playerTwoMatchDelta.drawsDelta
+            data: {
+                lifetimeElo: playerOneFaction.lifetimeElo,
+                lifetimeWins: {
+                    increment: playerOneMatchDelta.winsDelta
+                },
+                lifetimeLosses: {
+                    increment: playerOneMatchDelta.lossesDelta
+                },
+                lifetimeDraws: {
+                    increment: playerOneMatchDelta.drawsDelta
+                }
             }
-        }
-    });    
-
+        });
+        
+            await prisma.playerFaction.update({
+            where: {
+                id: playerTwoFaction.id
+            },
+            data: {
+                lifetimeElo: playerTwoFaction.lifetimeElo,
+                lifetimeWins: {
+                    increment: playerTwoMatchDelta.winsDelta
+                },
+                lifetimeLosses: {
+                    increment: playerTwoMatchDelta.lossesDelta
+                },
+                lifetimeDraws: {
+                    increment: playerTwoMatchDelta.drawsDelta
+                }
+            }
+        });    
+    } catch(err){
+        console.error('Error while updating faction Elo', err);
+    }
 }

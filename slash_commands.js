@@ -118,7 +118,7 @@ export async function leaderboard_request(res, req){
             }
         });
         const leaderboardLength = community.members.length > 10 ? 10 : community.members.length;
-        for(i = 0; i < leaderboardLength; i++){
+        for(let i = 0; i < leaderboardLength; i++){
             msg += "${i + 1}. ${community.members[i].displayName} --- ${community.members[i].lifetimeElo}";
         }
 
