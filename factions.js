@@ -45,5 +45,7 @@ export async function createFactionChoices(){
         }
     })).map(val => ({value: val.id, name: val.name}));
 
+    console.log(factions);
+
     return factions;
 }
