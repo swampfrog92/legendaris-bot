@@ -44,6 +44,8 @@ export function findElo (leaderboard, userId){
 
 export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, oppVP, playerFactionId, oppFactionId){
     try{
+
+        // Checks if a player has a ranking in this faction, if not, creates it. Returns the row.
         const playerOneFaction = await prisma.playerFaction.upsert({
             where: {
                 communityMemberId_factionId: {
@@ -59,6 +61,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
             }
         });
 
+        // Checks if a player has a ranking in this faction, if not, creates it. Returns the row.
         const playerTwoFaction = await prisma.playerFaction.upsert({
             where: {
                 communityMemberId_factionId: {
@@ -74,6 +77,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
             }
         });
 
+        // Updates the lifetime wins/loss/tie for both players.
         const playerOneMatchDelta = {
             winsDelta: playerVP > oppVP ? 1 : 0,
             lossesDelta: playerVP < oppVP ? 1 : 0,
@@ -85,9 +89,11 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
             drawsDelta: playerVP === oppVP ? 1 : 0,
         }
 
+        // Calculates new elo for both players.
         playerOneFaction.lifetimeElo = playerVP > oppVP ? adjustEloForVictory(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : adjustEloForTie(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo);
         playerTwoFaction.lifetimeElo = playerVP < oppVP ? adjustEloForVictory(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : adjustEloForTie(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo);
 
+        // Updates the database.
         await prisma.playerFaction.update({
             where: {
                 id: playerOneFaction.id
@@ -125,5 +131,47 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
         });    
     } catch(err){
         console.error('Error while updating faction Elo', err);
+    }
+}
+
+// Updates the community elo after a match. Takes five arguments: the prisma client, playerOne and playerTwo (both rows from communityMember), and the victory points for each player. Updates the lifetimeElo for both players in the community, and creates a new matchCommunity entry.
+export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP){
+    try{
+        // Updates the lifetime Elo for the players.
+        const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne.lifetimeElo, playerTwo.lifetimeElo) : yourVP < oppVP ? adjustEloForDefeat(playerOne.lifetimeElo, playerTwo.lifetimeElo) : adjustEloForTie(playerOne.lifetimeElo, playerTwo.lifetimeElo);
+        const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo.lifetimeElo, playerOne.lifetimeElo) : yourVP > oppVP ? adjustEloForDefeat(playerTwo.lifetimeElo, playerOne.lifetimeElo) : adjustEloForTie(playerTwo.lifetimeElo, playerOne.lifetimeElo);
+        
+        // Creates a new matchCommunity entry.
+        await prisma.matchCommunity.create({
+            data: {
+                matchId: matchId,
+                communityId: 'cms6g007x0001lo0psadsm3w7', // Hardcoded for testing purposes
+                playerOneEloBefore: playerOne.lifetimeElo,
+                playerTwoEloBefore: playerTwo.lifetimeElo,
+                playerOneEloAfter: playerOneNewElo,
+                playerTwoEloAfter: playerTwoNewElo,
+            }
+        });
+
+        // Updates the Elo in the specific community.
+        await prisma.communityMember.update({
+            where: {
+                id: playerOne.id
+            },
+            data: {
+                lifetimeElo: playerOneNewElo
+            }
+        });
+
+        await prisma.communityMember.update({
+            where: {
+                id: playerTwo.id
+            },
+            data: {
+                lifetimeElo: playerTwoNewElo
+            }
+        });
+    } catch(err){
+        console.error('Error while updating Elo', err);
     }
 }

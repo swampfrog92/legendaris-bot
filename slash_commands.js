@@ -10,6 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
+import { helpMessage } from 'text.js';
 
 export const prisma = new PrismaClient();
 
@@ -148,7 +149,7 @@ export function help_request(res) {
           components: [
             {
               type: MessageComponentTypes.TEXT_DISPLAY,
-              content: `This will be a message explaining the instructions on how to use this bot.`
+              content: helpMessage
             }
           ]
         },
@@ -180,7 +181,7 @@ export async function results_request(res, req, client) {
         // submit to DB
         const matchId = (await prisma.match.create({
             data: {
-                gameSystemId: '1',
+                gameSystemId: '1', // Hardcoded for testing purposes. This is the ID for 40k.
                 submittedById: userDbId,
                 playerOneId: userDbId,
                 playerTwoId: oppUserDbId,
@@ -198,43 +199,11 @@ export async function results_request(res, req, client) {
         // Updates the specific Elo for the faction played. 
         updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
 
-        // Updates the lifetime Elo for the players.
-        const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne.lifetimeElo, playerTwo.lifetimeElo) : yourVP < oppVP ? adjustEloForDefeat(playerOne.lifetimeElo, playerTwo.lifetimeElo) : adjustEloForTie(playerOne.lifetimeElo, playerTwo.lifetimeElo);
-        const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo.lifetimeElo, playerOne.lifetimeElo) : yourVP > oppVP ? adjustEloForDefeat(playerTwo.lifetimeElo, playerOne.lifetimeElo) : adjustEloForTie(playerTwo.lifetimeElo, playerOne.lifetimeElo);
-        
-        // Creates a new matchCommunity entry.
-        await prisma.matchCommunity.create({
-            data: {
-                matchId: matchId,
-                communityId: 'cms6g007x0001lo0psadsm3w7', // Hardcoded for testing purposes
-                playerOneEloBefore: playerOne.lifetimeElo,
-                playerTwoEloBefore: playerTwo.lifetimeElo,
-                playerOneEloAfter: playerOneNewElo,
-                playerTwoEloAfter: playerTwoNewElo,
-            }
-        });
+        // Updates the community Elo for the players.
+        updateElo(prisma, playerOne, playerTwo, yourVP, oppVP);
 
-        // Updates the Elo in the specific community.
-        await prisma.communityMember.update({
-            where: {
-                id: playerOne.id
-            },
-            data: {
-                lifetimeElo: playerOneNewElo
-            }
-        });
-
-        await prisma.communityMember.update({
-            where: {
-                id: playerTwo.id
-            },
-            data: {
-                lifetimeElo: playerTwoNewElo
-            }
-        });
-
-        const communityName = (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name;
-        notify_user_of_match(oppUserId, communityName, client);
+        // Sends a DM to the opponent to notify them of the match submission.
+        notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name, client);
 
         // Upon success, display the results on the guild server. 
         return res.send({
