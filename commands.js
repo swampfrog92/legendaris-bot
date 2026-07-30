@@ -82,12 +82,36 @@ const RESULTS_COMMAND = {
       choices: [
         {
           name: 'Space Marines',
-          value: '1',
+          value: 'SM',
         },
         {
           name: 'Orks',
-          value: '2',
-        }
+          value: 'OK',
+        },
+        {
+          name: 'Adeptus Mechanicus',
+          value: 'AM',
+        },
+        {
+          name: 'Imperial Guard',
+          value: 'IG',
+        },
+        {
+          name: 'Sisters of Battle',
+          value: 'SB',
+        },
+        {
+          name: 'Necrons',
+          value: 'NC',
+        },
+        {
+          name: 'Chaos Space Marines',
+          value: 'CM',
+        },
+        {
+          name: 'Thousand Sons',
+          value: 'TS',
+        },
       ]
     }
 
