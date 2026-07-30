@@ -16,7 +16,7 @@ export const prisma = new PrismaClient();
 export async function rank_request(res) {
 
     try{
-        const community = await prisma.community.findUnique({
+        let community = await prisma.community.findUnique({
             where: {
                 id: 'cms6g007x0001lo0psadsm3w7',
             },
