@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
@@ -135,7 +135,7 @@ export async function leaderboard_request(res, req){
         },
     });
     } catch(err){
-        console.err('Error while creating leaderboard', err);
+        console.error('Error while creating leaderboard', err);
     }
 }
 
