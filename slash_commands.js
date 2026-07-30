@@ -32,6 +32,7 @@ export async function rank_request(res, req) {
             }
         });
 
+        console.log(community);
         community = sortLeaderboard(community);
         const userRank = findRank(community, userId);
 
