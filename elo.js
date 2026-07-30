@@ -32,9 +32,9 @@ export function adjustEloForTie(winner, loser){
 }
 
 export async function sortLeaderboard(community){
-    return community.sort((a, b) => b.lifetimeElo - a.lifetimeElo);
+    return community.members.sort((a, b) => b.lifetimeElo - a.lifetimeElo);
 }
 
 export function findRank (leaderboard, username){
-    return leaderboard.findIndex(member => member.displayName === username) + 1;
+    return leaderboard.members.findIndex(member => member.displayName === username) + 1;
 }
