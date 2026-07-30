@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { factionChoices } from './factions.js';
+import { factionChoices, createFactionChoices } from './factions.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 
 const HELP_COMMAND = {
@@ -64,14 +64,14 @@ const RESULTS_COMMAND = {
       name: 'faction',
       description: 'Your faction',
       required: true,
-      choices: factionChoices
+      choices: createFactionChoices()
     },
     {
       type: 3,
       name: 'opponent_faction',
       description: 'Your opponents faction',
       required: true,
-      choices: factionChoices
+      choices: createFactionChoices()
     }
 
   ]
