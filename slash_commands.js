@@ -201,7 +201,7 @@ export async function results_request(res, req, client) {
         updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
 
         // Updates the community Elo for the players.
-        updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId);
+        const newElo = updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId);
 
         // Sends a DM to the opponent to notify them of the match submission.
         notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name, client);
@@ -214,7 +214,7 @@ export async function results_request(res, req, client) {
             components: [
             {
                 type: MessageComponentTypes.TEXT_DISPLAY,
-                content: `This will display the result: <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}. The winner is: <@${victoryMessage}>`
+                content: `New match submission! <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}. The winner is: <@${victoryMessage}>. \n\n New Elo for <@${userId}> is ${newElo.p1}. New Elo for <@${oppUserId}> is ${newElo.p2}`
             }
             ]
         },
@@ -265,6 +265,9 @@ export async function notify_request(res, req) {
 export async function join_request(res, req) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     let userDbId;
+
+    // Chooses which username to use. Starts with most specific to most general. 
+    const discordUsername = req.body.member?.nick ?? req.body.member?.user?.global_name ?? req.body.member?.user?.username ?? req.body.user?.global_name ?? req.body.user?.username;
     try{
         if (await prisma.user.findUnique({ where: { discordId: userId } })) {
             userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } })).id;
