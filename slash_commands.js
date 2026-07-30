@@ -43,7 +43,7 @@ export async function rank_request(res, req) {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: 'Your current rank is ${userRank}',
+            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members.',
         },
         });
     } catch (err){
