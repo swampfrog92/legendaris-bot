@@ -31,18 +31,8 @@ export function adjustEloForTie(winner, loser){
     return winner_elo + k * (0.5 - expected_winner);
 }
 
-export async function sortLeaderboard(res, req, prisma){
-    const members = await prisma.communityMember.findMany({
-        select: {
-            displayName: true,
-            elo: true
-        },
-        where:{
-            communityId: 'cms6g007x0001lo0psadsm3w7'
-        }
-    });
-
-    return members.sort((a, b) => b.lifetimeElo - a.lifetimeElo);
+export async function sortLeaderboard(community){
+    return community.sort((a, b) => b.lifetimeElo - a.lifetimeElo);
 }
 
 export function findRank (leaderboard, username){
