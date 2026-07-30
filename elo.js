@@ -46,9 +46,10 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
     try{
         const playerOneFaction = await prisma.playerFaction.upsert({
             where: {
-                communityMemberId: playerOne.id,
-                factionId:
-                playerFactionId
+                communityMemberId_factionId: {
+                    communityMemberId: playerOne.id,
+                    factionId: playerFactionId
+                }
             },
             update: {},
             create: {
@@ -60,8 +61,10 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
 
         const playerTwoFaction = await prisma.playerFaction.upsert({
             where: {
-                communityMemberId: playerTwo.id,
-                factionId: oppFactionId
+                communityMemberId_factionId: {
+                    communityMemberId: playerTwo.id,
+                    factionId: oppFactionId
+                }
             },
             update: {},
             create: {
