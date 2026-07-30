@@ -36,6 +36,7 @@ export async function rank_request(res, req) {
         });
 
         console.log(community);
+        console.log(userId);
         const userRank = findRank(community, userId);
 
 
