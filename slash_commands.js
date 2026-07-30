@@ -97,7 +97,7 @@ export function info_request(res) {
     });
 }
 
-export function leaderboard_request(res, req){
+export async function leaderboard_request(res, req){
     try{
         const msg = "Current Leaderboard: \n";
         let community = await prisma.community.findUnique({
@@ -300,11 +300,10 @@ export async function join_request(res, req) {
                 }
             }))?.id;
         }
-        console (userDbId);
-        
+        console.log(userDbId);
         // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
-        if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select : {id : true} }))?.id) {
-            userDbId = (await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
+        if ((await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select : {id : true} }))?.id) {
+            userDbId = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
                 return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
