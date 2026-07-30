@@ -200,7 +200,6 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
                 }
             }
         });
-        console.log(newElo);
         return {p1: playerOneNewElo, p2: playerTwoNewElo};
     } catch(err){
         console.error('Error while updating Elo', err);

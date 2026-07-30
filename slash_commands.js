@@ -219,6 +219,8 @@ export async function results_request(res, req, client) {
             ]
         },
         });
+        
+        console.log(newElo);
     } catch (err){
         console.error('Database error while submitting results: ', err);
         return res.send({
