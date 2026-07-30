@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
@@ -35,16 +35,14 @@ export async function rank_request(res, req) {
             }
         });
 
-        console.log(community);
-        console.log(userId);
         const userRank = findRank(community, userId);
-
+        const currentElo = findElo(community, userId);
 
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members.',
+            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members. Your current Elo is ' + currentElo + '.',
         },
         });
     } catch (err){
