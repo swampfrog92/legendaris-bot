@@ -39,6 +39,6 @@ export function findRank (leaderboard, userId){
     return leaderboard.members.findIndex(member => member.userId === userId) + 1;
 }
 
-export function findRank (leaderboard, userId){
+export function findElo (leaderboard, userId){
     return leaderboard.members.find(member => member.userId === userId).lifetimeElo;
 }
