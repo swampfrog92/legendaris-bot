@@ -137,7 +137,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
 // Updates the community elo after a match. Takes five arguments: the prisma client, playerOne and playerTwo (both rows from communityMember), and the victory points for each player. Updates the lifetimeElo for both players in the community, and creates a new matchCommunity entry.
 export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, matchId){
     try{
-        // Updates the lifetime Elo for the players.
+        // Calculates the new lifetime Elo for the players.
         const playerOneNewElo = playerVP > oppVP ? adjustEloForVictory(playerOne.lifetimeElo, playerTwo.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOne.lifetimeElo, playerTwo.lifetimeElo) : adjustEloForTie(playerOne.lifetimeElo, playerTwo.lifetimeElo);
         const playerTwoNewElo = playerVP < oppVP ? adjustEloForVictory(playerTwo.lifetimeElo, playerOne.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwo.lifetimeElo, playerOne.lifetimeElo) : adjustEloForTie(playerTwo.lifetimeElo, playerOne.lifetimeElo);
         
