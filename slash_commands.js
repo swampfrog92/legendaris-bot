@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
