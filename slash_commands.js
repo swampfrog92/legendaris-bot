@@ -135,7 +135,7 @@ export async function leaderboard_request(res, req){
         },
     });
     } catch(err){
-        console.log('Error while creating leaderboard');
+        console.err('Error while creating leaderboard', err);
     }
 }
 
