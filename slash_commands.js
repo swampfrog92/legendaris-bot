@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 import { helpMessage } from './text.js';
 
