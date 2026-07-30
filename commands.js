@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { factionChoices, createFactionChoices } from './factions.js';
+import { createFactionChoices } from './factions.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 
 async function createCommands(){
@@ -111,7 +111,7 @@ async function createCommands(){
     contexts: [0, 1, 2],
   } 
 
-  const ALL_COMMANDS = [HELP_COMMAND, INFO_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND];
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }
