@@ -40,8 +40,8 @@ export const factionChoices = [
 export async function createFactionChoices(){
     const factions = (await prisma.faction.findMany({
         select: {
-            id = true,
-            name = true
+            id: true,
+            name: true
         }
     }).map(val => ({value: val.id, name: val.name})));
 
