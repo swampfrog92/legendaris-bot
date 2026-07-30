@@ -198,10 +198,10 @@ export async function results_request(res, req, client) {
         const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
 
         // Updates the specific Elo for the faction played. 
-        updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction, matchId);
+        updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
 
         // Updates the community Elo for the players.
-        updateElo(prisma, playerOne, playerTwo, yourVP, oppVP);
+        updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId);
 
         // Sends a DM to the opponent to notify them of the match submission.
         notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name, client);
