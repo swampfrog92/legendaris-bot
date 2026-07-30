@@ -214,7 +214,7 @@ export async function results_request(res, req, client) {
             components: [
             {
                 type: MessageComponentTypes.TEXT_DISPLAY,
-                content: `New match submission! <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}. The winner is: <@${victoryMessage}>. \n\n New Elo for <@${userId}> is ${newElo.p1}. New Elo for <@${oppUserId}> is ${newElo.p2}`
+                content: `New match submission! <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}.`
             }
             ]
         },
