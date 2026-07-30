@@ -195,8 +195,14 @@ export async function results_request(res, req, client) {
         const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
         const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
 
-        const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne, playerTwo) : yourVP < oppVP ? adjustEloForDefeat(playerOne, playerTwo) : adjustEloForTie(playerOne, playerTwo);
-        const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo, playerOne) : yourVP > oppVP ? adjustEloForDefeat(playerTwo, playerOne) : adjustEloForTie(playerTwo, playerOne);
+        // Updates the specific Elo for the faction played. 
+        updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
+
+        // Updates the lifetime Elo for the players.
+        const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne.lifetimeElo, playerTwo.lifetimeElo) : yourVP < oppVP ? adjustEloForDefeat(playerOne.lifetimeElo, playerTwo.lifetimeElo) : adjustEloForTie(playerOne.lifetimeElo, playerTwo.lifetimeElo);
+        const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo.lifetimeElo, playerOne.lifetimeElo) : yourVP > oppVP ? adjustEloForDefeat(playerTwo.lifetimeElo, playerOne.lifetimeElo) : adjustEloForTie(playerTwo.lifetimeElo, playerOne.lifetimeElo);
+        
+        // Creates a new matchCommunity entry.
         await prisma.matchCommunity.create({
             data: {
                 matchId: matchId,
@@ -208,6 +214,7 @@ export async function results_request(res, req, client) {
             }
         });
 
+        // Updates the Elo in the specific community.
         await prisma.communityMember.update({
             where: {
                 id: playerOne.id
