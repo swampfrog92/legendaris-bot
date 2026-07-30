@@ -10,7 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage } from 'text.js';
+import { helpMessage } from './text.js';
 
 export const prisma = new PrismaClient();
 

@@ -152,14 +152,34 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP){
                 playerTwoEloAfter: playerTwoNewElo,
             }
         });
-
+        // Updates the lifetime wins/loss/tie for both players.
+        const playerOneMatchDelta = {
+            winsDelta: playerVP > oppVP ? 1 : 0,
+            lossesDelta: playerVP < oppVP ? 1 : 0,
+            drawsDelta: playerVP === oppVP ? 1 : 0,
+        }
+        const playerTwoMatchDelta = {
+            winsDelta: playerVP < oppVP ? 1 : 0,
+            lossesDelta: playerVP > oppVP ? 1 : 0,
+            drawsDelta: playerVP === oppVP ? 1 : 0,
+        }
+        
         // Updates the Elo in the specific community.
         await prisma.communityMember.update({
             where: {
                 id: playerOne.id
             },
             data: {
-                lifetimeElo: playerOneNewElo
+                lifetimeElo: playerOneNewElo,
+                lifetimeWins: {
+                    increment: playerOneMatchDelta.winsDelta
+                },
+                lifetimeLosses: {
+                    increment: playerOneMatchDelta.lossesDelta
+                },
+                lifetimeDraws: {
+                    increment: playerOneMatchDelta.drawsDelta
+                }
             }
         });
 
@@ -168,7 +188,16 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP){
                 id: playerTwo.id
             },
             data: {
-                lifetimeElo: playerTwoNewElo
+                lifetimeElo: playerTwoNewElo,
+                lifetimeWins: {
+                    increment: playerTwoMatchDelta.winsDelta
+                },
+                lifetimeLosses: {
+                    increment: playerTwoMatchDelta.lossesDelta
+                },
+                lifetimeDraws: {
+                    increment: playerTwoMatchDelta.drawsDelta
+                }
             }
         });
     } catch(err){
