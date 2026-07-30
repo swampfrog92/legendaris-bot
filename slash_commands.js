@@ -27,13 +27,15 @@ export async function rank_request(res, req) {
                         displayName: true,
                         lifetimeElo: true,
                         userId: true
+                    },
+                    orderBy: {
+                        lifetimeElo: "desc"
                     }
                 }
             }
         });
 
         console.log(community);
-        community = sortLeaderboard(community);
         const userRank = findRank(community, userId);
 
 
