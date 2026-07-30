@@ -8,24 +8,46 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderBoard } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 
 export const prisma = new PrismaClient();
 
 export function rank_request(res) {
-    return res.send({
-    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-    data: {
-      flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-      components: [
-        {
-          type: MessageComponentTypes.TEXT_DISPLAY,
-          content: `This will display the user's rank for: ${userId}`
-        }
-      ]
-    },
-  });
+
+    try{
+        const community = await prisma.community.findUnique({
+            where: {
+                id: 'cms6g007x0001lo0psadsm3w7',
+            },
+            select: {
+                members: {
+                    select: {
+                        displayName: true,
+                        lifetimeElo: true
+                    }
+                }
+            }
+        });
+
+        community = sortLeaderboard(community);
+        const userRank = findRank(community, req.body.member?.user?.username ?? req.body.user?.username) ?? 'Cannot find username';
+
+        return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+        components: [
+            {
+            type: MessageComponentTypes.TEXT_DISPLAY,
+            content: `Your current rank is ${userRank}`
+            }
+        ]
+        },
+    });
+    } catch (err){
+        console.error('Database error while fetching rank: ', err);
+    }
 }
 
 export async function create_chapter_request(res, req){
@@ -104,34 +126,13 @@ export async function results_request(res, req, client) {
 
     try{
         // Searches the database to find the unique ID of the player
-        const userDbId = (await prisma.user.findUnique({
-        where: {
-            discordId: userId
-        },
-        select: {
-            id: true
-        }
-        }))?.id;
+        const userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true }}))?.id;
 
         // Searches the database to find the unique ID of the opponent
-        const oppUserDbId = (await prisma.user.findUnique({
-        where: {
-            discordId: oppUserId
-        },
-        select: {
-            id: true
-        }
-        }))?.id;
+        const oppUserDbId = (await prisma.user.findUnique({ where: { discordId: oppUserId},select: {id: true}}))?.id;
 
         // Searches the database to find the unique ID of the winner. If no winner is found, it is submitted as '-1'
-        const winnerDbId = (await prisma.user.findUnique({
-        where: {
-            discordId: winner
-        },
-        select: {
-            id: true
-        }
-        }))?.id ?? '-1';    
+        const winnerDbId = (await prisma.user.findUnique({where: { discordId: winner }, select: { id: true }}))?.id ?? '-1';    
 
         // submit to DB
         const matchId = (await prisma.match.create({
@@ -147,18 +148,9 @@ export async function results_request(res, req, client) {
             }
         }))?.id;
 
-        const playerOne = (await prisma.communityMember.findFirst({
-            where: {
-                userId: userDbId,
-                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for testing purposes
-            }
-        }));
-            const playerTwo = (await prisma.communityMember.findFirst({
-            where: {
-                userId: oppUserDbId,
-                communityId: 'cms6g007x0001lo0psadsm3w7' // Hardcoded for testing purposes
-            }
-        }));
+        // Community ID is hardcoded for testing purposes.
+        const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
+        const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
 
         const playerOneNewElo = yourVP > oppVP ? adjustEloForVictory(playerOne, playerTwo) : yourVP < oppVP ? adjustEloForDefeat(playerOne, playerTwo) : adjustEloForTie(playerOne, playerTwo);
         const playerTwoNewElo = yourVP < oppVP ? adjustEloForVictory(playerTwo, playerOne) : yourVP > oppVP ? adjustEloForDefeat(playerTwo, playerOne) : adjustEloForTie(playerTwo, playerOne);
@@ -258,12 +250,12 @@ export async function join_request(res, req) {
             userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true } })).id;
         }
         else{
-            await prisma.user.create({
+            userDbId = (await prisma.user.create({
                 data: {
                     discordId: userId,
                     discordUsername: req.body.member?.user?.username ?? req.body.user?.username,
                 }
-            });
+            }))?.id;
         }
         // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
         if ((await prisma.communityMember.findFirst({ where: { userId: userId, communityId: 'cms6g007x0001lo0psadsm3w7' } }))?.id) {
