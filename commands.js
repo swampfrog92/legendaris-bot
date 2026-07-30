@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { factionChoices } from './factions.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 
 const HELP_COMMAND = {
@@ -63,56 +64,14 @@ const RESULTS_COMMAND = {
       name: 'faction',
       description: 'Your faction',
       required: true,
-      choices: [
-        {
-          name: 'Space Marines',
-          value: '1',
-        },
-        {
-          name: 'Orks',
-          value: '2',
-        }
-      ]
+      choices: factionChoices
     },
     {
       type: 3,
       name: 'opponent_faction',
       description: 'Your opponents faction',
       required: true,
-      choices: [
-        {
-          name: 'Space Marines',
-          value: 'SM',
-        },
-        {
-          name: 'Orks',
-          value: 'OK',
-        },
-        {
-          name: 'Adeptus Mechanicus',
-          value: 'AM',
-        },
-        {
-          name: 'Imperial Guard',
-          value: 'IG',
-        },
-        {
-          name: 'Sisters of Battle',
-          value: 'SB',
-        },
-        {
-          name: 'Necrons',
-          value: 'NC',
-        },
-        {
-          name: 'Chaos Space Marines',
-          value: 'CM',
-        },
-        {
-          name: 'Thousand Sons',
-          value: 'TS',
-        },
-      ]
+      choices: factionChoices
     }
 
   ]
