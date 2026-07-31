@@ -160,7 +160,7 @@ export function help_request(res) {
     });
 }
 
-export async function setup_chapter_request(res, req) {
+export async function link_request(res, req) {
     
     const communityId = req.body.data.options?.find(opt => opt.name === 'community_id')?.value;
     const guildId = req.body.guild_id;

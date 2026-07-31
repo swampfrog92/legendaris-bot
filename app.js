@@ -73,8 +73,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     else if (name === 'leaderboard'){
       return leaderboard_request(res, req);
     }
-    else if (name === 'setup_chapter'){
-      return setup_chapter_request(res, req);
+    else if (name === 'link'){
+      return link_request(res, req);
     }
 
     else if (name === 'results') {
