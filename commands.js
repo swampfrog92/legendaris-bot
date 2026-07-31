@@ -119,8 +119,8 @@ async function createCommands(){
     contexts: [0, 1, 2],
   } 
 
-const SETUP_COMMAND = {
-    name: 'setup',
+const SETUP_CHAPTER_COMMAND = {
+    name: 'setup_chapter',
     description: 'The admin should use this command to link this Discord guild with a Legendaris Chapter',
     type: 1,
     integration_types: [0, 1],
@@ -136,7 +136,7 @@ const SETUP_COMMAND = {
     ]
   } 
 
-  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, SETUP_COMMAND];
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, SETUP_CHAPTER_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }
