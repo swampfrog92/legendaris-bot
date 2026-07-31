@@ -3,7 +3,7 @@ import { PrismaClient } from "./generated/prisma/client.js";
 export const prisma = new PrismaClient();
 
 export async function createGameSystemChoices(){
-    const gameSystems = (await prisma.faction.findMany({
+    const gameSystems = (await prisma.gameSystem.findMany({
         select: {
             id: true,
             name: true
