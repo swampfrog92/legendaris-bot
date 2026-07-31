@@ -160,6 +160,37 @@ export function help_request(res) {
     });
 }
 
+export async function setup_request(res, req) {
+    
+    const communityId = req.body.data.options?.find(opt => opt.name === 'community_id')?.value;
+    const guildId = req.body.guild_id;
+
+    await prisma.discordChapter.upsert({
+        where: {
+            id: guildId,
+            communityId
+        },
+        update: {},
+        create: {
+            id: guildId,
+            communityId
+        }
+    });
+
+    return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+        flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+          components: [
+            {
+              type: MessageComponentTypes.TEXT_DISPLAY,
+              content: "Congratulations on joining the chapter!"
+            }
+          ]
+        },
+    });
+}
+
 export async function results_request(res, req, client) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     const oppUserId = req.body.data.options?.find(opt => opt.name === 'opponent')?.value;
@@ -168,6 +199,8 @@ export async function results_request(res, req, client) {
     const yourFaction = req.body.data.options?.find(opt => opt.name === 'faction')?.value;
     const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
     const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
+
+    const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'gameSystem')?.value;
 
     // Determines the winner. In case of a tie, '-1'
     const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
@@ -185,7 +218,7 @@ export async function results_request(res, req, client) {
         // submit to DB
         const matchId = (await prisma.match.create({
             data: {
-                gameSystemId: '1', // Hardcoded for testing purposes. This is the ID for 40k.
+                gameSystemId: gameSystemPlayed,
                 submittedById: userDbId,
                 playerOneId: userDbId,
                 playerTwoId: oppUserDbId,

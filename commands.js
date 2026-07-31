@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { createFactionChoices } from './factions.js';
+import { createGameSystemChoices } from './gameSystem.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 
 async function createCommands(){
@@ -62,6 +63,13 @@ async function createCommands(){
       },
       {
         type: 3,
+        name: 'gameSystem',
+        description: 'The game system played',
+        required: true,
+        choices: await createGameSystemChoices()
+      },
+      {
+        type: 3,
         name: 'faction',
         description: 'Your faction',
         required: true,
@@ -111,7 +119,24 @@ async function createCommands(){
     contexts: [0, 1, 2],
   } 
 
-  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND];
+const SETUP_COMMAND = {
+    name: 'setup',
+    description: 'The admin should use this command to link this Discord guild with a Legendaris Chapter',
+    type: 1,
+    integration_types: [0, 1],
+    contexts: [0, 1, 2],
+    default_member_permissions: "8",
+    options: [
+      {
+        type: 3,
+        name: 'community_id',
+        description: 'Enter the Community ID provided by the website',
+        required: true
+      }
+    ]
+  } 
+
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, SETUP_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }
