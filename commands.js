@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createFactionChoices } from './factions.js';
-import { createGameSystemChoices } from './gameSystem.js';
+import { createGameSystemChoices } from './gameSystems.js';
 import { capitalize, InstallGlobalCommands } from './utils.js';
 
 async function createCommands(){
