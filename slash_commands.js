@@ -21,7 +21,6 @@ export async function rank_request(res, req) {
 
     try{
         const communityId = (await getChapter(req, prisma));
-        console.log(communityId);
         const userId = (await prisma.user.findUnique({ where: { discordId: req.body.member?.user?.id ?? req.body.user?.id }, select: { id: true } }))?.id;
         let community = await prisma.community.findUnique({
             where: {
@@ -105,9 +104,10 @@ export function info_request(res) {
 export async function leaderboard_request(res, req){
     try{
         let msg = "Current Leaderboard: \n";
+        const communityId = (await getChapter(req, prisma));
         let community = await prisma.community.findUnique({
             where: {
-                id: 'cms6g007x0001lo0psadsm3w7',
+                id: communityId,
             },
             select: {
                 members: {
@@ -196,18 +196,18 @@ export async function results_request(res, req, client) {
             }
         }))?.id;
 
-        // Community ID is hardcoded for testing purposes.
-        const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
-        const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId: 'cms6g007x0001lo0psadsm3w7'}}));
+        const communityId = (await getChapter(req, prisma));
+        const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId}}));
+        const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId}}));
 
         // Updates the specific Elo for the faction played. 
         updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
 
         // Updates the community Elo for the players.
-        const newElo = updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId);
+        const newElo = updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId, req);
 
         // Sends a DM to the opponent to notify them of the match submission.
-        notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: 'cms6g007x0001lo0psadsm3w7'}}))?.name, client);
+        notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: communityId}}))?.name, client);
 
         // Upon success, display the results on the guild server. 
         return res.send({
@@ -286,9 +286,9 @@ export async function join_request(res, req) {
             }))?.id;
         }
         console.log(userDbId);
-        // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
-        if ((await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select : {id : true} }))?.id) {
-            userDbId = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId: 'cms6g007x0001lo0psadsm3w7' }, select: { id: true } })).id;
+        const communityId = (await getChapter(req, prisma));
+        if ((await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId }, select : {id : true} }))?.id) {
+            userDbId = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId }, select: { id: true } })).id;
                 return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -307,7 +307,7 @@ export async function join_request(res, req) {
                 data: {
                     userId: userDbId,
                     // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
-                    communityId: 'cms6g007x0001lo0psadsm3w7',
+                    communityId,
                     displayName: req.body.member?.user?.username ?? req.body.user?.username,
                 }
             });
