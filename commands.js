@@ -63,7 +63,7 @@ async function createCommands(){
       },
       {
         type: 3,
-        name: 'gameSystem',
+        name: 'game_system',
         description: 'The game system played',
         required: true,
         choices: await createGameSystemChoices()

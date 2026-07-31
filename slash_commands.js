@@ -200,7 +200,7 @@ export async function results_request(res, req, client) {
     const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
     const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
 
-    const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'gameSystem')?.value;
+    const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'game_system')?.value;
 
     // Determines the winner. In case of a tie, '-1'
     const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
