@@ -12,6 +12,8 @@ import { PrismaClient } from "./generated/prisma/client.js";
 export async function getChapter(req, prisma){
     try{
         const discordId = req.body.guild_id;
+        console.log(discordId);
+        console.log(req.body);
         const communityId = (await prisma.discordChapter.findUnique({
             where:{
                 id: discordId
