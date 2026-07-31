@@ -13,7 +13,7 @@ export async function getChapter(req, prisma){
     try{
         const discordId = req.body.guild_id;
         console.log(discordId);
-        console.log(req.body);
+
         const communityId = (await prisma.discordChapter.findUnique({
             where:{
                 id: discordId
@@ -23,6 +23,7 @@ export async function getChapter(req, prisma){
             }
         }))?.communityId;
 
+        console.log(communityId);
         return communityId;
     } catch(err){
         console.error("Error while retrieving CommunityId", error);
