@@ -9,7 +9,7 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
-export async function getChapter(res, req, prisma){
+export async function getChapter(req, prisma){
     try{
         const discordId = req.body.guild_id;
         const communityId = (await prisma.discordChapter.findUnique({
