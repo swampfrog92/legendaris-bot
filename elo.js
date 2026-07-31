@@ -8,6 +8,7 @@ import {
 } from 'discord-interactions';
 
 import { PrismaClient } from "./generated/prisma/client.js";
+import { getChapter } from './chapter.js';
 
 // Takes two ints as an argument, and returns the new elo for the player.
 export function adjustEloForVictory(playerOneElo, playerTwoElo){

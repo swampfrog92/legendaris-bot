@@ -13,7 +13,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
-import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request, leaderboard_request } from './slash_commands.js';
+import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request, leaderboard_request, link_request } from './slash_commands.js';
 
 const app = express();
 

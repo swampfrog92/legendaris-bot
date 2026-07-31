@@ -162,33 +162,37 @@ export function help_request(res) {
 
 export async function link_request(res, req) {
     
-    const communityId = req.body.data.options?.find(opt => opt.name === 'community_id')?.value;
-    const guildId = req.body.guild_id;
+    try{
+        const communityId = req.body.data.options?.find(opt => opt.name === 'community_id')?.value;
+        const guildId = req.body.guild_id;
 
-    await prisma.discordChapter.upsert({
-        where: {
-            id: guildId,
-            communityId
-        },
-        update: {},
-        create: {
-            id: guildId,
-            communityId
-        }
-    });
-
-    return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-          components: [
-            {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              content: "Congratulations on joining the chapter!"
+        await prisma.discordChapter.upsert({
+            where: {
+                id: guildId,
+                communityId
+            },
+            update: {},
+            create: {
+                id: guildId,
+                communityId
             }
-          ]
-        },
-    });
+        });
+
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            components: [
+                {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: "Congratulations on joining the chapter!"
+                }
+            ]
+            },
+        });
+    } catch(err){
+        console.error("Error while linking chapter to Discord guild", err);
+    }
 }
 
 export async function results_request(res, req, client) {
