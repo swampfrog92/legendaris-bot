@@ -86,6 +86,7 @@ model Community {
   invites ChapterInvite[]
   seasons Season[]
   matches MatchCommunity[]
+  discordChapters DiscordChapter[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -275,4 +276,14 @@ model ChapterInvite {
 
   @@unique([communityId])
   @@index([code])
+}
+
+model DiscordChapter {
+  id          String    @id
+
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
