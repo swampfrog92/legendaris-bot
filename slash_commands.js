@@ -20,7 +20,7 @@ export const prisma = new PrismaClient();
 export async function rank_request(res, req) {
 
     try{
-        const communityId = getChapter(req, prisma);
+        const communityId = (await getChapter(req, prisma));
         console.log(communityId);
         const userId = (await prisma.user.findUnique({ where: { discordId: req.body.member?.user?.id ?? req.body.user?.id }, select: { id: true } }))?.id;
         let community = await prisma.community.findUnique({
