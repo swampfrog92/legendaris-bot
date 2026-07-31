@@ -125,7 +125,6 @@ const LINK_COMMAND = {
     type: 1,
     integration_types: [0, 1],
     contexts: [0, 1, 2],
-    default_member_permissions: "8",
     options: [
       {
         type: 3,
