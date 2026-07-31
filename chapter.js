@@ -21,7 +21,7 @@ export async function getChapter(req, prisma){
             select: {
                 communityId: true
             }
-        }))?.communityId;
+        })).communityId;
 
         console.log(communityId);
         return communityId;
