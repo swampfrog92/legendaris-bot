@@ -23,23 +23,18 @@ export async function rank_request(res, req) {
     try{
         const communityId = (await getChapter(req, prisma));
         const userId = (await prisma.user.findUnique({ where: { discordId: req.body.member?.user?.id ?? req.body.user?.id }, select: { id: true } }))?.id;
-        let community = await prisma.community.findUnique({
+        let community = (await prisma.community.findUnique({
             where: {
                 id: communityId,
             },
             select: {
                 members: {
-                    select: {
-                        displayName: true,
-                        lifetimeElo: true,
-                        userId: true
-                    },
                     orderBy: {
                         lifetimeElo: "desc"
                     }
                 }
             }
-        });
+        }));
 
         const userRank = findRank(community, userId);
         const currentElo = findElo(community, userId);
@@ -317,7 +312,6 @@ export async function results_request(res, req, client) {
         },
         });
         
-        console.log(newElo);
     } catch (err){
         console.error('Database error while submitting results: ', err);
         return res.send({
@@ -380,7 +374,7 @@ export async function join_request(res, req) {
                 }
             }))?.id;
         }
-        console.log(userDbId);
+
         const communityId = (await getChapter(req, prisma));
         if ((await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId }, select : {id : true} }))?.id) {
             userDbId = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId }, select: { id: true } })).id;
