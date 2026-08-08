@@ -24,7 +24,7 @@ export async function getFactionStats(res, req, prisma){
         let msg = "Your faction stats: \n\n";
 
         for (let i = 0; i < factionStats.length; i++) {
-            msg += factionStats[i].faction.name + ": " + factionStats[i].lifetimeElo + " ELO\n";
+            msg += factionStats[i].faction.name + ": " + factionStats[i].lifetimeElo + " Elo " + factionStats[i].lifetimeWins + "/" + factionStats[i].lifetimeLosses + "/" + factionStats[i].lifetimeDraws + "\n";
         }
 
         return msg;
@@ -32,4 +32,13 @@ export async function getFactionStats(res, req, prisma){
     } catch(err){
         console.error("Error while retrieving Faction Stats", err);
     }
+}
+
+// Takes one argument--the member of the community being requested. 
+export async function getRecord(member){
+    const wins = member.lifetimeWins;
+    const losses = member.lifetimeLosses;
+    const draws = member.lifetimeDraws;
+
+    return wins + '/' + losses + '/' + draws;
 }

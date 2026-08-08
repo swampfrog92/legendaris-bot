@@ -125,6 +125,14 @@ async function createCommands(){
     type: 1,
     integration_types: [0, 1],
     contexts: [0, 1, 2],
+    options: [
+      {
+        type: 4,
+        name: 'length',
+        description: 'Enter how many of the top players to display. If left blank, default is 10.',
+        required: false
+      }
+    ]
   } 
 
 const LINK_COMMAND = {

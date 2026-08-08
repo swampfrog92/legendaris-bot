@@ -12,7 +12,7 @@ import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboa
 import { notify_user_of_match } from './messages.js';
 import { helpMessage } from './text.js';
 import { getChapter } from './chapter.js';
-import { getFactionStats } from './stats.js';
+import { getFactionStats, getRecord } from './stats.js';
 
 export const prisma = new PrismaClient();
 
@@ -44,11 +44,14 @@ export async function rank_request(res, req) {
         const userRank = findRank(community, userId);
         const currentElo = findElo(community, userId);
 
+        // returns current record as a string
+        const currentRecord = getRecord(community.members.find(member => member.userId === userId));
+
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members. Your current Elo is ' + currentElo + '.',
+            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members. Your current Elo is ' + currentElo + '.\n Your record is ' + currentRecord,
         },
         });
     } catch (err){
@@ -144,8 +147,15 @@ export async function info_request(res, req) {
     }
 }
 
+// This function returns the top-n leaderboard. Default is 10. 
 export async function leaderboard_request(res, req){
     try{
+        let requestedLength = req.body.data.options?.find(opt => opt.name === 'length')?.value ?? 10;
+        
+        if (requestedLength < 1){
+            requestedLength = 1;
+        }
+
         let msg = "Current Leaderboard: \n";
         const communityId = (await getChapter(req, prisma));
         let community = await prisma.community.findUnique({
@@ -165,7 +175,7 @@ export async function leaderboard_request(res, req){
                 }
             }
         });
-        const leaderboardLength = community.members.length > 10 ? 10 : community.members.length;
+        const leaderboardLength = community.members.length > requestedLength ? requestedLength : community.members.length;
         for(let i = 0; i < leaderboardLength; i++){
             msg += `${i + 1}. ${community.members[i].displayName} --- ${community.members[i].lifetimeElo}\n`;
         }
@@ -287,8 +297,12 @@ export async function results_request(res, req, client) {
         const newElo = updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId, req);
 
         // Sends a DM to the opponent to notify them of the match submission.
-        notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: communityId}}))?.name, client);
-
+        try{
+            notify_user_of_match(oppUserId, (await prisma.community.findUnique({ where: { id: communityId}}))?.name, client);
+        } catch(err){
+            console.error("Error while notifying opponent", err);
+        }
+        
         // Upon success, display the results on the guild server. 
         return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -321,6 +335,7 @@ export async function results_request(res, req, client) {
     }
 }
 
+// Currently unused function
 export async function notify_request(res, req) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     try {
@@ -386,7 +401,6 @@ export async function join_request(res, req) {
             await prisma.communityMember.create({
                 data: {
                     userId: userDbId,
-                    // TODO: THIS IS HARD CODED INTO THE TEST CHAPTER.
                     communityId,
                     displayName: req.body.member?.user?.username ?? req.body.user?.username,
                 }
