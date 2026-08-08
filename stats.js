@@ -18,7 +18,7 @@ export async function getFactionStats(res, req, prisma){
         console.log(userId);
         const communityMember = (await prisma.communityMember.findUnique({ where: { userId_communityId: { userId, communityId } }, select: { id: true } }));
         console.log(communityMember);
-        const factionStats = (await prisma.playerFaction.findMany({ where: { communityMemberId: communityMember.id } }));
+        const factionStats = (await prisma.playerFaction.findMany({ where: { communityMemberId: communityMember.id }, include: { faction: true } }));
         console.log(factionStats);
 
         let msg = "Your faction stats: \n\n";
