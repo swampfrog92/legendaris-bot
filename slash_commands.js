@@ -86,19 +86,44 @@ export async function create_chapter_request(res, req){
   }
 }
 
-export function info_request(res) {
-    return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-          components: [
-            {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              content: `This will be a message explaining the information regarding the league status`
+export function info_request(res, req) {
+    try{
+        const communityId = (await getChapter(req, prisma));
+        let community = await prisma.community.findUnique({
+            where: {
+                id: communityId,
+            },
+            select: {
+                members: {
+                    select: {
+                        displayName: true,
+                        lifetimeElo: true,
+                        userId: true
+                    }
+                },
+                name: true,
+                description: true,
             }
-          ]
-        },
-    });
+        });
+
+        const msg = 'This is the ' + community.name + ' community. ' + community.description + ' \n\n This community currently has ' + community.members.length + ' members.';
+
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            components: [
+                {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: msg
+                }
+            ]
+            },
+        });
+    }
+    catch(err){
+        console.error("Error while retrieving community info", err);
+    }
 }
 
 export async function leaderboard_request(res, req){
