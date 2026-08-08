@@ -106,7 +106,7 @@ export async function info_request(res, req) {
             }
         });
 
-        const msg = 'This is the ' + community.name + ' community. ' + community.description ? community.description : '' + ' \n\n This community currently has ' + community.members.length + ' members.';
+        const msg = 'This is the ' + community.name + ' community. ' + (community.description ?? '') + ' \n\n This community currently has ' + community.members.length + ' members.';
 
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
