@@ -55,7 +55,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       return help_request(res);
     }
     else if (name === 'info') {
-      return info_request(res);
+      return info_request(res, req);
     }
 
     else if (name === 'rank') {

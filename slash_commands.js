@@ -86,7 +86,7 @@ export async function create_chapter_request(res, req){
   }
 }
 
-export function info_request(res, req) {
+export async function info_request(res, req) {
     try{
         const communityId = (await getChapter(req, prisma));
         let community = await prisma.community.findUnique({
