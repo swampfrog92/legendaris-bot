@@ -30,7 +30,7 @@ async function createCommands(){
 
   const STATS_COMMAND = {
     name: 'stats',
-    description: 'Receive an ephemeral message about your stats with each faction you have played with in this community',
+    description: 'Receive a message about your stats with each faction you have played with in this community',
     type: 1,
     integration_types: [0,1],
     contexts: [0,1,2],
