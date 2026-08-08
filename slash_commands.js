@@ -12,6 +12,7 @@ import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboa
 import { notify_user_of_match } from './messages.js';
 import { helpMessage } from './text.js';
 import { getChapter } from './chapter.js';
+import { getFactionStats } from './stats.js';
 
 export const prisma = new PrismaClient();
 
@@ -52,6 +53,23 @@ export async function rank_request(res, req) {
         });
     } catch (err){
         console.error('Database error while fetching rank: ', err);
+    }
+}
+
+// These commands are called when the system receives a slash command. See ./app.js. 
+export async function stats_request(res, req) {
+
+    try{
+        const factionStats = await getFactionStats(res, req, prisma);
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            data: {
+            content: factionStats,
+        },
+        });
+    } catch (err){
+        console.error('Database error while fetching stats: ', err);
     }
 }
 

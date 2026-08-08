@@ -62,6 +62,10 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       return rank_request(res, req);
     }
 
+    else if (name === 'stats') {
+      return getFactionStats(res, req);
+    }
+
     else if (name === 'create_chapter'){
       return create_chapter_request(res, req);
     } 

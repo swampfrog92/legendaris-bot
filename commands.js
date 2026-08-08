@@ -28,6 +28,14 @@ async function createCommands(){
     contexts: [0,1,2],
   };
 
+  const STATS_COMMAND = {
+    name: 'stats',
+    description: 'Receive an ephemeral message about your stats with each faction you have played with in this community',
+    type: 1,
+    integration_types: [0,1],
+    contexts: [0,1,2],
+  };
+
   const NOTIFY_COMMAND = {
     name: 'notify',
     description: 'send a dm',
@@ -135,7 +143,7 @@ const LINK_COMMAND = {
     ]
   } 
 
-  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND];
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }
