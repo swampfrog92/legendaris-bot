@@ -100,7 +100,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
                 id: playerOneFaction.id
             },
             data: {
-                lifetimeElo: plyaerOneNewFactionElo,
+                lifetimeElo: playerOneNewFactionElo,
                 lifetimeWins: {
                     increment: playerOneMatchDelta.winsDelta
                 },
