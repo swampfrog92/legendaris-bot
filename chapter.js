@@ -9,10 +9,10 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
+// Takes one argument--the request object from the discord interaction. Returns the communityId of the chapter that the interaction was sent from.
 export async function getChapter(req, prisma){
     try{
         const discordId = req.body.guild_id;
-        console.log(discordId);
 
         const communityId = (await prisma.discordChapter.findUnique({
             where:{
@@ -23,7 +23,6 @@ export async function getChapter(req, prisma){
             }
         })).communityId;
 
-        console.log(communityId);
         return communityId;
     } catch(err){
         console.error("Error while retrieving CommunityId", error);

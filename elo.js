@@ -91,8 +91,8 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
         }
 
         // Calculates new elo for both players.
-        playerOneFaction.lifetimeElo = playerVP > oppVP ? adjustEloForVictory(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : adjustEloForTie(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo);
-        playerTwoFaction.lifetimeElo = playerVP < oppVP ? adjustEloForVictory(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : adjustEloForTie(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo);
+        const playerOneNewFactionElo = playerVP > oppVP ? adjustEloForVictory(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo) : adjustEloForTie(playerOneFaction.lifetimeElo, playerTwoFaction.lifetimeElo);
+        const playerTwoNewFactionElo = playerVP < oppVP ? adjustEloForVictory(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo) : adjustEloForTie(playerTwoFaction.lifetimeElo, playerOneFaction.lifetimeElo);
 
         // Updates the database.
         await prisma.playerFaction.update({
@@ -100,7 +100,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
                 id: playerOneFaction.id
             },
             data: {
-                lifetimeElo: playerOneFaction.lifetimeElo,
+                lifetimeElo: plyaerOneNewFactionElo,
                 lifetimeWins: {
                     increment: playerOneMatchDelta.winsDelta
                 },
@@ -118,7 +118,7 @@ export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, o
                 id: playerTwoFaction.id
             },
             data: {
-                lifetimeElo: playerTwoFaction.lifetimeElo,
+                lifetimeElo: playerTwoNewFactionElo,
                 lifetimeWins: {
                     increment: playerTwoMatchDelta.winsDelta
                 },

@@ -9,6 +9,7 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 import { getChapter } from './chapter.js';
+import { errorFactionStatsMessage } from './text.js';
 
 export async function getFactionStats(res, req, prisma){
     try{
@@ -17,15 +18,16 @@ export async function getFactionStats(res, req, prisma){
         const communityMember = (await prisma.communityMember.findUnique({ where: { userId_communityId: { userId, communityId } }, select: { id: true } }));
         const factionStats = (await prisma.playerFaction.findMany({ where: { communityMemberId: communityMember.id }, include: { faction: true } }));
 
-        let msg = "Your faction stats: \n\n";
+        let msg = "*** Your faction stats: *** \n\n";
 
         for (let i = 0; i < factionStats.length; i++) {
-            msg += factionStats[i].faction.name + ": " + factionStats[i].lifetimeElo + " Elo " + factionStats[i].lifetimeWins + "/" + factionStats[i].lifetimeLosses + "/" + factionStats[i].lifetimeDraws + "\n";
+            msg += "* " + factionStats[i].faction.name + ": " + factionStats[i].lifetimeElo + " Elo " + factionStats[i].lifetimeWins + "/" + factionStats[i].lifetimeLosses + "/" + factionStats[i].lifetimeDraws + "\n";
         }
 
         return msg;
 
     } catch(err){
+        return errorFactionStatsMessage;
         console.error("Error while retrieving Faction Stats", err);
     }
 }

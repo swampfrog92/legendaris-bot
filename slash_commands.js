@@ -10,7 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage } from './text.js';
+import { helpMessage, errorUpdatingEloMessage, infoErrorMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord } from './stats.js';
 
@@ -138,6 +138,18 @@ export async function info_request(res, req) {
         });
     }
     catch(err){
+            return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            components: [
+                {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: infoErrorMessage
+                }
+            ]
+            },
+        });
         console.error("Error while retrieving community info", err);
     }
 }
@@ -321,7 +333,7 @@ export async function results_request(res, req, client) {
             components: [
             {
                 type: MessageComponentTypes.TEXT_DISPLAY,
-                content: 'Error while submitting your results. Please try again later. Contact support team if problem persists.'
+                content: errorUpdatingEloMessage,
             }
             ]
         }
