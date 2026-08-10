@@ -291,7 +291,7 @@ export async function results_request(res, req, client) {
     }
 
     // If the user has not joined the chapter, returns error message to user.
-    if(await !ifJoined(prisma, userId, communityId)){
+    if(!(await ifJoined(prisma, userId, communityId))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
@@ -302,7 +302,7 @@ export async function results_request(res, req, client) {
     }
 
     // If the opponent has not joined the chapter, returns error message to user.
-    if(await !ifJoined(prisma, oppUserId, communityId)){
+    if(!(await ifJoined(prisma, oppUserId, communityId))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
