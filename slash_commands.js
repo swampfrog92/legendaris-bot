@@ -47,7 +47,7 @@ export async function rank_request(res, req) {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: 'Your current rank is ' + userRank + ' out of ' + community.members.length + ' members. Your current Elo is ' + currentElo + '.\n Your record is ' + currentRecord,
+            content: '~~~~~~~~~~~~~~~~\nYour current rank is ' + userRank + ' out of ' + community.members.length + ' members.\n Your current Elo is ' + currentElo + '.\n Your record is ' + currentRecord + '\n~~~~~~~~~~~~~~~~',
         },
         });
     } catch (err){
