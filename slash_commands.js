@@ -13,6 +13,7 @@ import { notify_user_of_match } from './messages.js';
 import { helpMessage, errorUpdatingEloMessage, infoErrorMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord } from './stats.js';
+import { ifJoined } from './search.js';
 
 export const prisma = new PrismaClient();
 
@@ -58,6 +59,15 @@ export async function rank_request(res, req) {
 export async function stats_request(res, req) {
 
     try{
+        if(!ifJoined(prisma, req.body.member?.user?.id ?? req.body.user?.id, (await getChapter(req, prisma)))){
+            return res.send({
+                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+                data: {
+                    content: "You must join this chapter before you can view your stats. Please use the /join command to join this chapter.",
+               },
+            });
+        }
         const factionStats = await getFactionStats(res, req, prisma);
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -266,6 +276,42 @@ export async function results_request(res, req, client) {
 
     const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'game_system')?.value;
 
+    
+    const communityId = (await getChapter(req, prisma));
+
+    // Checks if victory points are a valid number. TODO: this is only valid for Warhammer 40k. Need to add a dynamic check when other game systems are added.
+    if(yourVP < 0 || oppVP < 0 || isNaN(yourVP) || isNaN(oppVP) || yourVP > 100 || oppVP > 100){
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            data: {
+                content: "Please enter valid victory points. Victory points must be a number between 0 and 100.",
+           },
+        });
+    }
+
+    // If the user has not joined the chapter, returns error message to user.
+    if(!ifJoined(prisma, userId, communityId)){
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            data: {
+                content: "You must join this chapter before you can submit results. Please use the /join command to join this chapter.",
+           },
+        });
+    }
+
+    // If the opponent has not joined the chapter, returns error message to user.
+    if(!ifJoined(prisma, oppUserId, communityId)){
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            data: {
+                content: "Your opponent must join this chapter before you can submit results. Please ask them to use the /join command to join this chapter.",
+           },
+        });
+    }
+
     // Determines the winner. In case of a tie, '-1'
     const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
 
@@ -293,7 +339,6 @@ export async function results_request(res, req, client) {
             }
         }))?.id;
 
-        const communityId = (await getChapter(req, prisma));
         const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId}}));
         const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId}}));
 
@@ -318,7 +363,7 @@ export async function results_request(res, req, client) {
             components: [
             {
                 type: MessageComponentTypes.TEXT_DISPLAY,
-                content: `New match submission! <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}.`
+                content: `New match submission! \n\n <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}.`
             }
             ]
         },
