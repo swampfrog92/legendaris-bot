@@ -469,6 +469,16 @@ export async function join_request(res, req) {
     const userId = req.body.member?.user?.id ?? req.body.user?.id;
     let userDbId;
 
+    // Chooses which display name to use. Starts with most specific to most general.
+    const displayName = req.body.member?.nick ?? req.body.member?.user?.global_name ?? req.body.member?.user?.username;
+
+    // Retrieves avatar URL, if available. 
+    const avatarUrl = req.body.member?.avatar
+        ? `https://cdn.discordapp.com/guilds/${req.body.guild_id}/users/${req.body.member.user.id}/avatars/${req.body.member.avatar}.png`
+        : req.body.member?.user?.avatar
+        ? `https://cdn.discordapp.com/avatars/${req.body.member.user.id}/${req.body.member.user.avatar}.png`
+        : null;
+
     // Chooses which username to use. Starts with most specific to most general. 
     const discordUsername = req.body.member?.nick ?? req.body.member?.user?.global_name ?? req.body.member?.user?.username ?? req.body.user?.global_name ?? req.body.user?.username;
     try{
@@ -480,6 +490,8 @@ export async function join_request(res, req) {
                 data: {
                     discordId: userId,
                     discordUsername: req.body.member?.user?.username ?? req.body.user?.username,
+                    displayName: displayName,
+                    avatarUrl: avatarUrl,
                 }
             }))?.id;
         }
