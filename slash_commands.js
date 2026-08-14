@@ -97,14 +97,19 @@ export async function season_stats_request(res, req) {
             });
         }
         const seasonStats = await getSeasonStats(res, req, prisma);
+        
         return res.send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-            data: {
-                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-                content: seasonStats,
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+          components: [
+            {
+              type: MessageComponentTypes.TEXT_DISPLAY,
+              content: seasonStats
+            }
+          ]
         },
-        });
+    });
     } catch (err){
         console.error('Database error while fetching stats: ', err);
     }
