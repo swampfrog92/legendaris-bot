@@ -33,7 +33,7 @@ export async function rank_request(res, req) {
             select: {
                 members: {
                     orderBy: {
-                        lifetimeElo: "desc"
+                        seasonElo: "desc"
                     }
                 }
             }

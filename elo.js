@@ -41,7 +41,7 @@ export function findRank (leaderboard, userId){
 }
 
 export function findElo (leaderboard, userId){
-    return leaderboard.members.find(member => member.userId === userId).lifetimeElo;
+    return leaderboard.members.find(member => member.userId === userId).seasonElo;
 }
 
 export async function updateFactionElo(prisma, playerOne, playerTwo, playerVP, oppVP, playerFactionId, oppFactionId){
