@@ -170,7 +170,7 @@ model Season {
 
   name      String
   startDate DateTime
-  endDate   DateTime
+  endDate   DateTime?
   isActive  Boolean  @default(false)
 
   community Community        @relation(fields: [communityId], references: [id], onDelete: Cascade)
