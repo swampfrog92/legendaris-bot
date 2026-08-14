@@ -14,6 +14,7 @@ import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
 import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request, leaderboard_request, link_request, stats_request, create_season_request } from './slash_commands.js';
+import { factionAutocomplete } from './factions.js';
 
 const app = express();
 
@@ -47,11 +48,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     return res.send({ type: InteractionResponseType.PONG });
   }
 
-  // autocomplete interactiosn are handled here.
+  // Autocomplete interactiosn are handled here.
   if (type === 4) {
     const { name, options } = data;
 
-    if (name === 'faction' || name === 'opponent_faction') {
+    if (focused.name === 'faction' || focused.name === 'opponent_faction') {
       return factionAutocomplete(req, res);
   }
 }
