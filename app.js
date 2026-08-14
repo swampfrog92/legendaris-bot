@@ -47,7 +47,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     return res.send({ type: InteractionResponseType.PONG });
   }
 
-  if (type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+  // autocomplete interactiosn are handled here.
+  if (type === 4) {
     const { name, options } = data;
 
     if (name === 'faction' || name === 'opponent_faction') {
