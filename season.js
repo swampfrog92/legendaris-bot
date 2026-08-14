@@ -13,8 +13,10 @@ export async function createSeason(prisma, name, communityId){
     try{
         // Finds any active seasons and sets them to inactive
         await prisma.season.updateMany({ where: { communityId, isActive: true }, data: { isActive: false, endDate: new Date() } });
-        await prisma.season.create({ data: { name, communityId, isActive: true, startDate: new Date() } });
-        return true;
+        const newSeason = await prisma.season.create({ data: { name, communityId, isActive: true, startDate: new Date() } });
+        if (newSeason) return true;
+        else return false;
+        
     } catch(err){
         console.error("Error while creating season", err);
         return false;
