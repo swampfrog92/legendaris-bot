@@ -15,6 +15,7 @@ import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord } from './stats.js';
 import { ifJoined } from './search.js';
 import { createSeason, getActiveSeason } from './season.js';
+import { ifValidFaction } from './factions.js';
 
 export const prisma = new PrismaClient();
 
@@ -287,6 +288,16 @@ export async function results_request(res, req, client) {
             flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
             data: {
                 content: "Please enter valid victory points. Victory points must be a number between 0 and 100.",
+           },
+        });
+    }
+
+    if(!(await ifValidFaction(yourFaction)) || !(await ifValidFaction(oppFaction))){
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            data: {
+                content: "Please enter valid factions. If you believe this is an error, please contact the support team.",
            },
         });
     }

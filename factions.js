@@ -40,3 +40,20 @@ export async function factionAutocomplete(req, res) {
         }
     });
 }
+
+export async function ifValidFaction(factionId) {
+    try{
+        const faction = await prisma.faction.findUnique({
+            where: {
+                id: factionId
+                }
+        });
+        if (faction) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
