@@ -164,7 +164,7 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
                 playerTwoSeasonEloBefore: playerTwo.seasonElo,
                 playerOneSeasonEloAfter: playerOneNewSeasonElo,
                 playerTwoSeasonEloAfter: playerTwoNewSeasonElo,
-                seasonId: activeSeason,
+                seasonId: activeSeason.id,
             }
         });
         // Updates the lifetime wins/loss/tie for both players.
