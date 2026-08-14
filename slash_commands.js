@@ -517,7 +517,7 @@ export async function join_request(res, req) {
                 data: {
                     userId: userDbId,
                     communityId,
-                    displayName: req.body.member?.user?.username ?? req.body.user?.username,
+                    displayName,
                 }
             });
             return res.send({
