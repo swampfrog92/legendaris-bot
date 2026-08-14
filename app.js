@@ -53,6 +53,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     if (name === 'faction' || name === 'opponent_faction') {
       return factionAutocomplete(req, res);
   }
+}
 
   // All slash commands are handled here. Each slash command must be defined in ./commands.js. Functions are located in ./slash_commands.js.
   if (type === InteractionType.APPLICATION_COMMAND) {
