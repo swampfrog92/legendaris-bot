@@ -97,7 +97,7 @@ export async function season_stats_request(res, req) {
             });
         }
         const seasonStats = await getSeasonStats(res, req, prisma);
-        
+
         return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
@@ -407,7 +407,7 @@ export async function results_request(res, req, client) {
             components: [
             {
                 type: MessageComponentTypes.TEXT_DISPLAY,
-                content: `New match submission! \n\n <@${userId}> - ${yourVP} --- <@${oppUserId}> - ${oppVP}.`
+                content: `New match submission! \n\n <@${userId}> - ${yourVP} versus <@${oppUserId}> - ${oppVP}.`
             }
             ]
         },

@@ -21,7 +21,6 @@ export async function ifJoined(prisma, discordId, communityId){
             }
         });
 
-        console.log(communityMember);
         if(communityMember){
             return true;
         }
