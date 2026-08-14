@@ -163,7 +163,7 @@ const LINK_COMMAND = {
       {
         type: 3,
         name: 'season_name',
-        description: 'Please enter a name for this season. This will be displayed on the leaderboard and in the /info command.',
+        description: 'Please enter a name for this season.',
         required: true
       }
     ]
