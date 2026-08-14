@@ -15,3 +15,5 @@ export const newSeasonMessage =  `A new season has begun! A new chance to prove 
                                 + `All previous season stats have been archived, and all players have been reset to their starting season Elo.\n`
                                 + `If you were a member of the previous season, you will be automatically added to the new season. If you would like to join this community, please use the /join command.\n\n`
                                 + `Good luck to all players in this new season!`;
+            
+export const userNotJoinedMessage = "You have not joined this community yet. Please use the /join command to join this community and start tracking your stats!";

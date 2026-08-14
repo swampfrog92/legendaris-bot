@@ -10,7 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage } from './text.js';
+import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
 import { ifJoined } from './search.js';
@@ -47,11 +47,14 @@ export async function rank_request(res, req) {
 
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\nYour current rank is ' + userRank + ' out of ' + community.members.length + ' members.\n Your current Elo is ' + currentElo + '.\n Your record is ' + currentRecord + '\n\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~',
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            components: [{
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\nYour current rank is ' + userRank + ' out of ' + community.members.length + ' members.\n Your current Elo is ' + currentElo + '.\n Your record is ' + currentRecord + '\n\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
+            }]
         },
-        });
+    });
     } catch (err){
         console.error('Database error while fetching rank: ', err);
     }
@@ -64,20 +67,27 @@ export async function stats_request(res, req) {
         if(!ifJoined(prisma, req.body.member?.user?.id ?? req.body.user?.id, (await getChapter(req, prisma)))){
             return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
                 data: {
-                    content: "You must join this chapter before you can view your stats. Please use the /join command to join this chapter.",
-               },
-            });
-        }
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+                components: [{
+                    type: MessageComponentTypes.TEXT_DISPLAY,
+                    content: userNotJoinedMessage
+                    }]
+            },
+        });
+    }
         const factionStats = await getFactionStats(res, req, prisma);
+
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
-            content: factionStats,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+            components: [{
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: factionStats
+            }]
         },
-        });
+    });
     } catch (err){
         console.error('Database error while fetching stats: ', err);
     }
@@ -186,12 +196,10 @@ export async function info_request(res, req) {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
             flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
-            components: [
-                {
+            components: [{
                 type: MessageComponentTypes.TEXT_DISPLAY,
                 content: infoErrorMessage
-                }
-            ]
+            }]
             },
         });
         console.error("Error while retrieving community info", err);
