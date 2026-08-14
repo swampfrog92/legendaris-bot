@@ -13,7 +13,7 @@ export async function createFactionChoices(){
     return factions;
 }
 
-async function factionAutocomplete(req, res) {
+export async function factionAutocomplete(req, res) {
     const focused = req.body.data.options.find(option => option.focused);
 
     const factions = await prisma.faction.findMany({
