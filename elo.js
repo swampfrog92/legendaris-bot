@@ -223,15 +223,15 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
                 lifetimeDraws: {
                     increment: playerTwoMatchDelta.drawsDelta
                 },
-                seasonElo: playerOneNewSeasonElo,
+                seasonElo: playerTwoNewSeasonElo,
                 seasonWins: {
-                    increment: playerOneMatchDelta.winsDelta
+                    increment: playerTwoMatchDelta.winsDelta
                 },
                 seasonLosses: {
-                    increment: playerOneMatchDelta.lossesDelta
+                    increment: playerTwoMatchDelta.lossesDelta
                 },
                 seasonDraws: {
-                    increment: playerOneMatchDelta.drawsDelta
+                    increment: playerTwoMatchDelta.drawsDelta
                 }
             }
         });
