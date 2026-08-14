@@ -9,6 +9,7 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 import { getChapter } from './chapter.js';
+import { getActiveSeason } from './season.js';
 
 // Takes two ints as an argument, and returns the new elo for the player.
 export function adjustEloForVictory(playerOneElo, playerTwoElo){
@@ -142,17 +143,28 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
         const playerOneNewElo = playerVP > oppVP ? adjustEloForVictory(playerOne.lifetimeElo, playerTwo.lifetimeElo) : playerVP < oppVP ? adjustEloForDefeat(playerOne.lifetimeElo, playerTwo.lifetimeElo) : adjustEloForTie(playerOne.lifetimeElo, playerTwo.lifetimeElo);
         const playerTwoNewElo = playerVP < oppVP ? adjustEloForVictory(playerTwo.lifetimeElo, playerOne.lifetimeElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwo.lifetimeElo, playerOne.lifetimeElo) : adjustEloForTie(playerTwo.lifetimeElo, playerOne.lifetimeElo);
         
+        // Calculates the new season Elo for the players.
+        const playerOneNewSeasonElo = playerVP > oppVP ? adjustEloForVictory(playerOne.seasonElo, playerTwo.seasonElo) : playerVP < oppVP ? adjustEloForDefeat(playerOne.seasonElo, playerTwo.seasonElo) : adjustEloForTie(playerOne.seasonElo, playerTwo.seasonElo);
+        const playerTwoNewSeasonElo = playerVP < oppVP ? adjustEloForVictory(playerTwo.seasonElo, playerOne.seasonElo) : playerVP > oppVP ? adjustEloForDefeat(playerTwo.seasonElo, playerOne.seasonElo) : adjustEloForTie(playerTwo.seasonElo, playerOne.seasonElo);
+        
         const communityId = (await getChapter(req, prisma));
+
+        const activeSeason = await getActiveSeason(prisma, communityId);
 
         // Creates a new matchCommunity entry.
         await prisma.matchCommunity.create({
             data: {
                 matchId,
-                communityId, // Hardcoded for testing purposes
+                communityId,
                 playerOneEloBefore: playerOne.lifetimeElo,
                 playerTwoEloBefore: playerTwo.lifetimeElo,
                 playerOneEloAfter: playerOneNewElo,
                 playerTwoEloAfter: playerTwoNewElo,
+                playerOneSeasonEloBefore: playerOne.seasonElo,
+                playerTwoSeasonEloBefore: playerTwo.seasonElo,
+                playerOneSeasonEloAfter: playerOneNewSeasonElo,
+                playerTwoSeasonEloAfter: playerTwoNewSeasonElo,
+                seasonId: activeSeason,
             }
         });
         // Updates the lifetime wins/loss/tie for both players.
@@ -181,6 +193,16 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
                     increment: playerOneMatchDelta.lossesDelta
                 },
                 lifetimeDraws: {
+                    increment: playerOneMatchDelta.drawsDelta
+                },
+                seasonElo: playerOneNewSeasonElo,
+                seasonWins: {
+                    increment: playerOneMatchDelta.winsDelta
+                },
+                seasonLosses: {
+                    increment: playerOneMatchDelta.lossesDelta
+                },
+                seasonDraws: {
                     increment: playerOneMatchDelta.drawsDelta
                 }
             }

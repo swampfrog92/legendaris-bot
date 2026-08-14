@@ -107,6 +107,11 @@ model CommunityMember {
   lifetimeLosses Int @default(0)
   lifetimeDraws  Int @default(0)
 
+  seasonElo Int @default(1000)
+  seasonWins Int @default(0)
+  seasonLosses Int @default(0)
+  seasonDraws Int @default(0)
+
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
 
@@ -247,6 +252,11 @@ model MatchCommunity {
   playerOneFactionEloAfter  Int?
   playerTwoFactionEloBefore Int?
   playerTwoFactionEloAfter  Int?
+
+  playerOneSeasonEloBefore Int?
+  playerOneSeasonEloAfter Int?
+  playerTwoSeasonEloBefore Int?
+  playerTwoSeasonEloAfter Int?
 
   match     Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
   community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
