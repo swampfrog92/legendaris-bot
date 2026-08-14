@@ -105,7 +105,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
 
     else if (name === 'season_stats') {
-      return getSeasonStats(res, req, prisma);
+      return season_stats_request(res, req);
     }
 
     // End of slash command handling
