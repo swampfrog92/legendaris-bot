@@ -12,7 +12,7 @@ import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboa
 import { notify_user_of_match } from './messages.js';
 import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage } from './text.js';
 import { getChapter } from './chapter.js';
-import { getFactionStats, getRecord } from './stats.js';
+import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
 import { ifJoined } from './search.js';
 import { createSeason, getActiveSeason, resetSeasonElo } from './season.js';
 import { ifValidFaction } from './factions.js';
@@ -76,6 +76,33 @@ export async function stats_request(res, req) {
             flags: InteractionResponseFlags.IS_COMPONENTS_V2,
             data: {
             content: factionStats,
+        },
+        });
+    } catch (err){
+        console.error('Database error while fetching stats: ', err);
+    }
+}
+
+// These commands are called when the system receives a slash command. See ./app.js. 
+export async function season_stats_request(res, req) {
+
+    try{
+        if(!ifJoined(prisma, req.body.member?.user?.id ?? req.body.user?.id, (await getChapter(req, prisma)))){
+            return res.send({
+                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+                data: {
+                    content: "You must join this chapter before you can view your stats. Please use the /join command to join this chapter.",
+               },
+            });
+        }
+        const seasonStats = await getSeasonStats(res, req, prisma);
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+                content: seasonStats,
         },
         });
     } catch (err){

@@ -167,9 +167,16 @@ const LINK_COMMAND = {
         required: true
       }
     ]
-  } 
+  }
+    const SEASON_STATS_COMMAND = {
+    name: 'season_stats',
+    description: 'Receive a message about your stats for this season.',
+    type: 1,
+    integration_types: [0,1],
+    contexts: [0,1,2],
+  }; 
 
-  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND, CREATE_SEASON_COMMAND];
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND, CREATE_SEASON_COMMAND, SEASON_STATS_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }
