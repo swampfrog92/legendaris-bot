@@ -14,7 +14,7 @@ import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessag
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord } from './stats.js';
 import { ifJoined } from './search.js';
-import { createSeason, getActiveSeason } from './season.js';
+import { createSeason, getActiveSeason, resetSeasonElo } from './season.js';
 import { ifValidFaction } from './factions.js';
 
 export const prisma = new PrismaClient();
