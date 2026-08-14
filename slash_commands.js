@@ -483,7 +483,7 @@ export async function join_request(res, req) {
 }
 
 export async function create_season_request(res, req) {
-    if (createSeason(prisma, req.body.data.options?.find(opt => opt.name === 'name')?.value, (await getChapter(req, prisma)))){
+    if (createSeason(prisma, req.body.data.options?.find(opt => opt.name === 'season_name')?.value, (await getChapter(req, prisma)))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
