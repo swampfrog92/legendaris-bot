@@ -10,3 +10,8 @@ export const errorFactionStatsMessage = "We encountered an error while retrievin
 export const errorUpdatingEloMessage = "We encountered an error while updating your Elo. Please try again later. If this problem persists, please contact our support team";
 
 export const infoErrorMessage = "We encountered an error while retrieving information about this community. Please try again later. If this problem persists, please contact our support team";
+
+export const newSeasonMessage =  `A new season has begun! A new chance to prove yourselves! \n \n `
+                                + `All previous season stats have been archived, and all players have been reset to their starting season Elo.\n`
+                                + `If you were a member of the previous season, you will be automatically added to the new season. If you would like to join this community, please use the /join command.\n\n`
+                                + `Good luck to all players in this new season!`;

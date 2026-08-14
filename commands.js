@@ -141,6 +141,7 @@ const LINK_COMMAND = {
     type: 1,
     integration_types: [0, 1],
     contexts: [0, 1, 2],
+    default_member_permissions: 32, // MANAGE SERVER
     options: [
       {
         type: 3,
@@ -151,7 +152,24 @@ const LINK_COMMAND = {
     ]
   } 
 
-  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND];
+  const CREATE_SEASON_COMMAND = {
+    name: 'create_season',
+    description: 'Begin a new season. Archives all previous season stats and resets players to 1000 season Elo. CANNOT BE UNDONE.',
+    type: 1,
+    integration_types: [0, 1],
+    contexts: [0, 1, 2],
+    default_member_permissions: 32, // MANAGE SERVER
+    options: [
+      {
+        type: 3,
+        name: 'season_name',
+        description: 'Please enter a name for this season. This will be displayed on the leaderboard and in the /info command.',
+        required: true
+      }
+    ]
+  } 
+
+  const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND, CREATE_SEASON_COMMAND];
 
   InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
 }

@@ -10,7 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage, errorUpdatingEloMessage, infoErrorMessage } from './text.js';
+import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord } from './stats.js';
 import { ifJoined } from './search.js';
@@ -477,6 +477,38 @@ export async function join_request(res, req) {
             flags: InteractionResponseFlags.EPHEMERAL,
             content: "Error while joining the chapter. Please try again later. Contact support team if problem persists.",
         },
+        });
+    }
+}
+
+export async function create_season_request(res, req) {
+    if (createSeason(prisma, req.body.data.options?.find(opt => opt.name === 'name')?.value, (await getChapter(req, prisma)))){
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            components: [
+                {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: newSeasonMessage
+                }
+            ]
+            },
+        });
+    }
+
+    else{
+            return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            components: [
+                {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: `Error while creating season. Please try again later. Contact support team if problem persists.`
+                }
+            ]
+            },
         });
     }
 }
