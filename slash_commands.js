@@ -295,8 +295,8 @@ export async function results_request(res, req, client) {
     if(!(await ifValidFaction(yourFaction)) || !(await ifValidFaction(oppFaction))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
             data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
                 content: "Please enter valid factions. If you believe this is an error, please contact the support team.",
            },
         });
@@ -306,8 +306,8 @@ export async function results_request(res, req, client) {
     if(!(await ifJoined(prisma, userId, communityId))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
             data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
                 content: "You must join this chapter before you can submit results. Please use the /join command to join this chapter.",
            },
         });
@@ -317,8 +317,8 @@ export async function results_request(res, req, client) {
     if(!(await ifJoined(prisma, oppUserId, communityId))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
             data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
                 content: "Your opponent must join this chapter before you can submit results. Please ask them to use the /join command to join this chapter.",
            },
         });
