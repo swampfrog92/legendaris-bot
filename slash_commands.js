@@ -290,7 +290,6 @@ export async function results_request(res, req, client) {
         });
     }
 
-    /*
     // If the user has not joined the chapter, returns error message to user.
     if(!(await ifJoined(prisma, userId, communityId))){
         return res.send({
@@ -312,8 +311,7 @@ export async function results_request(res, req, client) {
            },
         });
     }
-        */
-
+        
     // Determines the winner. In case of a tie, '-1'
     const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
 
