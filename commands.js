@@ -81,14 +81,14 @@ async function createCommands(){
         name: 'faction',
         description: 'Your faction',
         required: true,
-        choices: await createFactionChoices()
+        autocomplete: true,
       },
       {
         type: 3,
         name: 'opponent_faction',
         description: 'Your opponents faction',
         required: true,
-        choices: await createFactionChoices()
+        autocomplete: true,
       }
 
     ]

@@ -1,0 +1,53 @@
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('sm', 'wh40k', 'Space Marines', 'space-marines', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('cm', 'wh40k', 'Chaos Space Marines', 'chaos-space-marines', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('sw', 'wh40k', 'Space Wolves', 'space-wolves', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('da', 'wh40k', 'Dark Angels', 'dark-angels', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ba', 'wh40k', 'Blood Angels', 'blood-angels', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('dw', 'wh40k', 'Deathwatch', 'deathwatch', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('gk', 'wh40k', 'Grey Knights', 'grey-knights', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ec', 'wh40k', 'Emperor''s Children', 'emperors-children', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('dg', 'wh40k', 'Death Guard', 'death-guard', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('we', 'wh40k', 'World Eaters', 'world-eaters', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ts', 'wh40k', 'Thousand Sons', 'thousand-sons', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('cd', 'wh40k', 'Chaos Daemons', 'chaos-daemons', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ig', 'wh40k', 'Imperial Guard', 'imperial-guard', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ac', 'wh40k', 'Adeptus Custodes', 'adeptus-custodes', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('sb', 'wh40k', 'Sisters of Battle', 'sisters-of-battle', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('am', 'wh40k', 'Adeptus Mechanicus', 'adeptus-mechanicus', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ik', 'wh40k', 'Imperial Knights', 'imperial-knights', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ck', 'wh40k', 'Chaos Knights', 'chaos-knights', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ty', 'wh40k', 'Tyranids', 'tyranids', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('gs', 'wh40k', 'Genestealer Cults', 'genestealer-cults', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('lv', 'wh40k', 'Leagues of Votann', 'leagues-of-votann', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('el', 'wh40k', 'Eldar', 'eldar', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('dk', 'wh40k', 'Drukhari', 'drukhari', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ok', 'wh40k', 'Orks', 'orks', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('ta', 'wh40k', 'Tau', 'tau', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('bt', 'wh40k', 'Black Templars', 'black-templars', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('nc', 'wh40k', 'Necrons', 'necrons', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
