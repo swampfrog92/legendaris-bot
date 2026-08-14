@@ -185,18 +185,18 @@ export async function leaderboard_request(res, req){
                 members: {
                     select: {
                         displayName: true,
-                        lifetimeElo: true,
+                        seasonElo: true,
                         userId: true
                     },
                     orderBy: {
-                        lifetimeElo: "desc"
+                        seasonElo: "desc"
                     }
                 }
             }
         });
         const leaderboardLength = community.members.length > requestedLength ? requestedLength : community.members.length;
         for(let i = 0; i < leaderboardLength; i++){
-            msg += `${i + 1}. ${community.members[i].displayName} --- ${community.members[i].lifetimeElo}\n`;
+            msg += `${i + 1}. ${community.members[i].displayName} --- ${community.members[i].seasonElo}\n`;
         }
 
         return res.send({
@@ -494,6 +494,7 @@ export async function join_request(res, req) {
 }
 
 export async function create_season_request(res, req) {
+    await resetSeasonElo(prisma, (await getChapter(req, prisma)));
     if (createSeason(prisma, req.body.data.options?.find(opt => opt.name === 'season_name')?.value, (await getChapter(req, prisma)))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

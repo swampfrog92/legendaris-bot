@@ -1,3 +1,5 @@
+INSERT INTO "GameSystem" ("id", "name", "slug", "createdAt", "updatedAt") VALUES ('wh40k', 'Warhammer 40k', 'warhammer-40k', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('sm', 'wh40k', 'Space Marines', 'space-marines', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('cm', 'wh40k', 'Chaos Space Marines', 'chaos-space-marines', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -51,3 +53,11 @@ INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updat
 INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('bt', 'wh40k', 'Black Templars', 'black-templars', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('nc', 'wh40k', 'Necrons', 'necrons', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "Community" ("id", "gameSystemId", "name", "slug", "description", "createdAt", "updatedAt") VALUES ('test', 'wh40k', 'Test Chapter', 'test-chapter', "This is a test chapter", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO "User" ("id", "discordId", "discordUsername", "createdAt", "updatedAt") VALUES ('-1', '-1', 'TIE', 'space-marines', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
+
+

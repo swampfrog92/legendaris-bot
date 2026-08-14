@@ -34,9 +34,9 @@ export async function getFactionStats(res, req, prisma){
 
 // Takes one argument--the member of the community being requested. 
 export function getRecord(member){
-    const wins = member.lifetimeWins;
-    const losses = member.lifetimeLosses;
-    const draws = member.lifetimeDraws;
+    const wins = member.seasonWins;
+    const losses = member.seasonLosses;
+    const draws = member.seasonDraws;
 
     return wins + '/' + losses + '/' + draws;
 }

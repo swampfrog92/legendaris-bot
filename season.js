@@ -32,3 +32,16 @@ export async function getActiveSeason(prisma, communityId){
         return null;
     }
 }
+
+export async function resetSeasonElo(prisma, communityId){
+    try{
+        await prisma.communityMember.updateMany({
+            where: { communityId },
+            data: { seasonElo: 1000, seasonWins: 0, seasonLosses: 0, seasonDraws: 0 }
+        });
+        return true;
+    } catch(err){
+        console.error("Error while resetting season Elo", err);
+        return false;
+    }
+}
