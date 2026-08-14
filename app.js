@@ -51,6 +51,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
   // Autocomplete interactiosn are handled here.
   if (type === 4) {
     const { name, options } = data;
+    const focused = options.find(opt => opt.focused);
 
     if (focused.name === 'faction' || focused.name === 'opponent_faction') {
       return factionAutocomplete(req, res);
