@@ -36,7 +36,7 @@ export async function getSeasonStats(res, req, prisma){
     try{
         const communityId = (await getChapter(req, prisma));
         const userId = (await prisma.user.findUnique({ where: { discordId: req.body.member?.user?.id ?? req.body.user?.id }, select: { id: true } }))?.id;
-        const communityMember = (await prisma.communityMember.findUnique({ where: { userId_communityId: { userId, communityId } }, select: { id: true } }));
+        const communityMember = (await prisma.communityMember.findUnique({ where: { userId_communityId: { userId, communityId } }, select: { seasonElo: true, seasonWins: true, seasonLosses: true, seasonDraws: true } }));
 
         let msg = "\\*\\*\\* Your season stats: \\*\\*\\* \n\n";
         msg += "Your current Elo is " + communityMember.seasonElo + ".\n";
