@@ -9,13 +9,15 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
-export async function ifJoined(prisma, userId, communityId){
+export async function ifJoined(prisma, discordId, communityId){
     try{
         console.log("Checking if user has joined community" + userId + communityId);
         const communityMember = await prisma.communityMember.findUnique({
             where: {
                 userId_communityId: {
-                    userId,
+                    user: {
+                        discordId
+                    },
                     communityId
                 }
             }
