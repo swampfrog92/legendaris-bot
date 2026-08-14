@@ -154,7 +154,7 @@ const LINK_COMMAND = {
 
   const CREATE_SEASON_COMMAND = {
     name: 'create_season',
-    description: 'Begin a new season. Archives all previous season stats and resets players to 1000 season Elo. CANNOT BE UNDONE.',
+    description: 'Begin a new season. Archives all previous season stats and resets season Elo. CANNOT BE UNDONE.',
     type: 1,
     integration_types: [0, 1],
     contexts: [0, 1, 2],
