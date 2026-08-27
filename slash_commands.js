@@ -195,6 +195,7 @@ export async function info_request(res, req) {
         });
     }
     catch(err){
+            console.error("Error while retrieving community info", err);
             return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
@@ -205,7 +206,6 @@ export async function info_request(res, req) {
             }]
             },
         });
-        console.error("Error while retrieving community info", err);
     }
 }
 
