@@ -251,6 +251,7 @@ export async function createMatch(res, req, prisma){
         const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
         const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'game_system')?.value;
         const communityId = (await getChapter(req, prisma));
+        const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
 
         // Searches the database to find the unique ID of the player
         const userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true }}))?.id;
