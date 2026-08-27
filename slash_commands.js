@@ -159,7 +159,7 @@ export async function create_chapter_request(res, req){
 export async function info_request(res, req) {
     try{
         const communityId = (await getChapter(req, prisma));
-        const season = (await getSeason(prisma, communityId));
+        const season = (await getActiveSeason(prisma, communityId));
         let community = await prisma.community.findUnique({
             where: {
                 id: communityId,
