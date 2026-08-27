@@ -178,7 +178,7 @@ export async function info_request(res, req) {
         });
 
         const msg = 'This is the ' + community.name + ' community. ' + (community.description ?? '') + 
-                    (season ? '\n\n The current season is ' + season.name + ' since ' + season.startDate.toLocaleDateString() : '') +
+                    (season ? '\n\n The current season is ' + season.name + ', which started on ' + season.startDate.toLocaleDateString() + '.' : '') +
                     ' \n\n This community currently has ' + community.members.length + ' members.';
 
         return res.send({
