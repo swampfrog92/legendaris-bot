@@ -159,6 +159,7 @@ export async function create_chapter_request(res, req){
 export async function info_request(res, req) {
     try{
         const communityId = (await getChapter(req, prisma));
+        const season = (await getSeason(prisma, communityId));
         let community = await prisma.community.findUnique({
             where: {
                 id: communityId,
@@ -176,7 +177,9 @@ export async function info_request(res, req) {
             }
         });
 
-        const msg = 'This is the ' + community.name + ' community. ' + (community.description ?? '') + ' \n\n This community currently has ' + community.members.length + ' members.';
+        const msg = 'This is the ' + community.name + ' community. ' + (community.description ?? '') + 
+                    season ? '\n\n The current season is ' + season.name + ' since ' + season.startDate.toLocaleDateString() : '' +
+                    ' \n\n This community currently has ' + community.members.length + ' members.';
 
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
