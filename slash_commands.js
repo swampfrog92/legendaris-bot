@@ -8,7 +8,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo } from './elo.js';
+import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo, createMatch } from './elo.js';
 import { notify_user_of_match } from './messages.js';
 import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage } from './text.js';
 import { getChapter } from './chapter.js';
@@ -317,11 +317,6 @@ export async function results_request(res, req, client) {
     const oppVP = req.body.data.options?.find(opt => opt.name === 'opponent_vp')?.value;
     const yourFaction = req.body.data.options?.find(opt => opt.name === 'faction')?.value;
     const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
-    const victoryMessage = yourVP > oppVP ? userId : yourVP < oppVP ? oppUserId : `It's a tie!`;
-
-    const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'game_system')?.value;
-
-    
     const communityId = (await getChapter(req, prisma));
 
     // Checks if victory points are a valid number. TODO: this is only valid for Warhammer 40k. Need to add a dynamic check when other game systems are added.
@@ -371,37 +366,7 @@ export async function results_request(res, req, client) {
     const winner = yourVP > oppVP ? userId : oppVP > yourVP ? oppUserId : '-1';
 
     try{
-        // Searches the database to find the unique ID of the player
-        const userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true }}))?.id;
-
-        // Searches the database to find the unique ID of the opponent
-        const oppUserDbId = (await prisma.user.findUnique({ where: { discordId: oppUserId},select: {id: true}}))?.id;
-
-        // Searches the database to find the unique ID of the winner. If no winner is found, it is submitted as '-1'
-        const winnerDbId = (await prisma.user.findUnique({where: { discordId: winner }, select: { id: true }}))?.id ?? '-1';    
-
-        // submit to DB
-        const matchId = (await prisma.match.create({
-            data: {
-                gameSystemId: gameSystemPlayed,
-                submittedById: userDbId,
-                playerOneId: userDbId,
-                playerTwoId: oppUserDbId,
-                winnerId: winnerDbId,
-                playerOneFactionId: yourFaction,
-                playerTwoFactionId: oppFaction,
-                playedAt: new Date(),
-            }
-        }))?.id;
-
-        const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId}}));
-        const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId}}));
-
-        // Updates the specific Elo for the faction played. 
-        updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
-
-        // Updates the community Elo for the players.
-        const newElo = updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId, req);
+        createMatch(res, req, prisma);
 
         // Sends a DM to the opponent to notify them of the match submission.
         try{

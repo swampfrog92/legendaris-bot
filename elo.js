@@ -240,3 +240,50 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
         console.error('Error while updating Elo', err);
     }
 }
+
+export async function createMatch(res, req, prisma){
+    try{
+        const userId = req.body.member?.user?.id ?? req.body.user?.id;
+        const oppUserId = req.body.data.options?.find(opt => opt.name === 'opponent')?.value;
+        const yourVP = req.body.data.options?.find(opt => opt.name === 'your_vp')?.value;
+        const oppVP = req.body.data.options?.find(opt => opt.name === 'opponent_vp')?.value;
+        const yourFaction = req.body.data.options?.find(opt => opt.name === 'faction')?.value;
+        const oppFaction = req.body.data.options?.find(opt => opt.name === 'opponent_faction')?.value;
+        const gameSystemPlayed = req.body.data.options?.find(opt => opt.name === 'game_system')?.value;
+        const communityId = (await getChapter(req, prisma));
+
+        // Searches the database to find the unique ID of the player
+        const userDbId = (await prisma.user.findUnique({ where: { discordId: userId }, select: { id: true }}))?.id;
+
+        // Searches the database to find the unique ID of the opponent
+        const oppUserDbId = (await prisma.user.findUnique({ where: { discordId: oppUserId},select: {id: true}}))?.id;
+
+        // Searches the database to find the unique ID of the winner. If no winner is found, it is submitted as '-1'
+        const winnerDbId = (await prisma.user.findUnique({where: { discordId: winner }, select: { id: true }}))?.id ?? '-1';    
+
+        // submit to DB
+        const matchId = (await prisma.match.create({
+            data: {
+                gameSystemId: gameSystemPlayed,
+                submittedById: userDbId,
+                playerOneId: userDbId,
+                playerTwoId: oppUserDbId,
+                winnerId: winnerDbId,
+                playerOneFactionId: yourFaction,
+                playerTwoFactionId: oppFaction,
+                playedAt: new Date(),
+            }
+        }))?.id;
+
+        const playerOne = (await prisma.communityMember.findFirst({ where: { userId: userDbId, communityId}}));
+        const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId}}));
+
+        // Updates the specific Elo for the faction played. 
+        updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
+
+        // Updates the community Elo for the players.
+        updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId, req);
+    } catch(err){
+        console.error('Error while creating match', err);
+    }
+}
