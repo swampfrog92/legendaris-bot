@@ -31,7 +31,9 @@ export async function findRecentMatchesForDisplay(prisma: PrismaClient, userId: 
 
         console.log(matches);
         for(let i = 0; i < matches.length; i++){
-            msg += `${i + 1}. <@${matches[i]!.playerOne.discordId}> vs <@${matches[i]!.playerTwo.discordId}>\n`;
+            msg += `${i + 1}. <@${matches[i]!.playerOne.discordId}> vs <@${matches[i]!.playerTwo.discordId}>\n\n` +
+                   `Played on: ${matches[i]!.createdAt.toLocaleDateString()}\n\n` +
+                   `Winner: ` + (matches[i]!.winnerId === matches[i]!.playerOne.id ? `<@${matches[i]!.playerOne.discordId}>` : matches[i]!.winnerId === matches[i]!.playerTwo.id ? `<@${matches[i]!.playerTwo.discordId}>` : "It's a draw!") + `\n`;
         }
         return msg;
     } catch(err){
