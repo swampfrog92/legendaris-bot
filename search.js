@@ -34,9 +34,9 @@ export async function ifJoined(prisma, discordId, communityId){
 
 export async function findUserIdFromDiscordId(prisma, discordId){
     try{
-        const userId = await prisma.user.findUnique({where: {discordId}}).id;
+        const userId = await prisma.user.findUnique({where: {discordId}});
         console.log("User Id: " + userId);
-        return userId;
+        return userId.id;
     } catch(err){
         console.log("Error while finding User ID", err);
     }
