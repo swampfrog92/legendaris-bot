@@ -9,6 +9,7 @@
     "node": ">=18.x"
   },
   "scripts": {
+    "build": "tsc",
     "start": "node app.js",
     "register": "node commands.js",
     "dev": "nodemon app.js",
