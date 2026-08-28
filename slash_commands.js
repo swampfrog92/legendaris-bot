@@ -278,8 +278,8 @@ export function help_request(res) {
 
 export async function history_request(res, req) {
     const userId = await findUserIdFromDiscordId(prisma, req.body.member?.user?.id ?? req.body.user?.id);
-    const length = req.body.data.options?.find(opt => opt.name === 'length')?.value && req.body.data.options?.find(opt => opt.name === 'length')?.value > 0 && req.body.data.options?.find(opt => opt.name === 'length')?.value < 25 ? req.body.data.options?.find(opt => opt.name === 'length')?.value : 5;
-    const msg = await findRecentMatchesForDisplay(prisma, userId, length);
+    const numMatches = req.body.data.options?.find(opt => opt.name === 'length')?.value && req.body.data.options?.find(opt => opt.name === 'length')?.value > 0 && req.body.data.options?.find(opt => opt.name === 'length')?.value < 25 ? req.body.data.options?.find(opt => opt.name === 'length')?.value : 5;
+    const msg = await findRecentMatchesForDisplay(prisma, userId, numMatches);
     return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {

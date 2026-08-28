@@ -9,7 +9,7 @@ import {
 
 import { PrismaClient } from "./generated/prisma/client.js";
 
-export async function findRecentMatchesForDisplay(prisma: PrismaClient, userId: string): Promise<string> {
+export async function findRecentMatchesForDisplay(prisma: PrismaClient, userId: string, numMatches: number): Promise<string> {
     try{
         let msg = "";
         const matches = await prisma.match.findMany({
@@ -26,7 +26,7 @@ export async function findRecentMatchesForDisplay(prisma: PrismaClient, userId: 
             orderBy: {
                 createdAt: 'desc'
             },
-            take: 5
+            take: numMatches
         });
 
         console.log(matches);
