@@ -182,6 +182,14 @@ const LINK_COMMAND = {
     type: 1,
     integration_types: [0, 1],
     contexts: [0, 1, 2],
+    options: [
+      {
+        type: 4,
+        name: 'length',
+        description: 'Enter how many matches to display. If left blank, default is 5.',
+        required: false
+      }
+    ]
   };
 
   const ALL_COMMANDS = [HELP_COMMAND, RANK_COMMAND, RESULTS_COMMAND, JOIN_COMMAND, LEADERBOARD_COMMAND, LINK_COMMAND, INFO_COMMAND, STATS_COMMAND, CREATE_SEASON_COMMAND, SEASON_STATS_COMMAND, HISTORY_COMMAND];
