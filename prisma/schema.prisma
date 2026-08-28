@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
 }
 
 enum CommunityRole {
@@ -20,6 +14,12 @@ enum CommunityRole {
   OWNER
 }
 
+enum CommunityStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+}
+
 enum MatchStatus {
   PENDING
   CONFIRMED
@@ -27,15 +27,14 @@ enum MatchStatus {
   CANCELLED
 }
 
-enum CommunityStatus {
-  DRAFT
+enum MatchCommunityStatus {
   ACTIVE
-  SUSPENDED
+  VOIDED
 }
 
 model User {
-  id              String  @id @default(cuid())
-  discordId       String  @unique
+  id              String @id @default(cuid())
+  discordId       String @unique
   discordUsername String
   displayName     String?
   avatarUrl       String?
@@ -48,6 +47,8 @@ model User {
   wonMatches       Match[] @relation("WonMatches")
   confirmedMatches Match[] @relation("ConfirmedMatches")
 
+  voidedMatchCommunities MatchCommunity[] @relation("VoidedMatchCommunities")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -59,17 +60,17 @@ model GameSystem {
   slug String @unique
 
   communities Community[]
+  factions    Faction[]
   matches     Match[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  factions  Faction[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Community {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
-  slug        String  @unique
+  slug        String @unique
   description String?
 
   status CommunityStatus @default(ACTIVE)
@@ -82,10 +83,10 @@ model Community {
 
   gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
 
-  members CommunityMember[]
-  invites ChapterInvite[]
-  seasons Season[]
-  matches MatchCommunity[]
+  members         CommunityMember[]
+  invites         ChapterInvite[]
+  seasons         Season[]
+  matches         MatchCommunity[]
   discordChapters DiscordChapter[]
 
   createdAt DateTime @default(now())
@@ -100,17 +101,17 @@ model CommunityMember {
 
   displayName String?
   role        CommunityRole @default(MEMBER)
-  joinedAt    DateTime      @default(now())
+  joinedAt    DateTime @default(now())
 
   lifetimeElo    Int @default(1000)
   lifetimeWins   Int @default(0)
   lifetimeLosses Int @default(0)
   lifetimeDraws  Int @default(0)
 
-  seasonElo Int @default(1000)
-  seasonWins Int @default(0)
+  seasonElo    Int @default(1000)
+  seasonWins   Int @default(0)
   seasonLosses Int @default(0)
-  seasonDraws Int @default(0)
+  seasonDraws  Int @default(0)
 
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
@@ -159,7 +160,7 @@ model PlayerFaction {
   lifetimeDraws  Int @default(0)
 
   communityMember CommunityMember @relation(fields: [communityMemberId], references: [id], onDelete: Cascade)
-  faction         Faction         @relation(fields: [factionId], references: [id], onDelete: Cascade)
+  faction         Faction @relation(fields: [factionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -176,9 +177,9 @@ model Season {
   name      String
   startDate DateTime
   endDate   DateTime?
-  isActive  Boolean  @default(false)
+  isActive  Boolean @default(false)
 
-  community Community        @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   matches   MatchCommunity[]
 
   createdAt DateTime @default(now())
@@ -200,6 +201,9 @@ model Match {
   playerOneFactionId String
   playerTwoFactionId String
 
+  playerOneScore Int?
+  playerTwoScore Int?
+
   winnerId      String?
   confirmedById String?
 
@@ -214,9 +218,9 @@ model Match {
 
   gameSystem GameSystem @relation(fields: [gameSystemId], references: [id])
 
-  submittedBy User  @relation("SubmittedMatches", fields: [submittedById], references: [id])
-  playerOne   User  @relation("PlayerOneMatches", fields: [playerOneId], references: [id])
-  playerTwo   User  @relation("PlayerTwoMatches", fields: [playerTwoId], references: [id])
+  submittedBy User @relation("SubmittedMatches", fields: [submittedById], references: [id])
+  playerOne   User @relation("PlayerOneMatches", fields: [playerOneId], references: [id])
+  playerTwo   User @relation("PlayerTwoMatches", fields: [playerTwoId], references: [id])
   winner      User? @relation("WonMatches", fields: [winnerId], references: [id])
   confirmedBy User? @relation("ConfirmedMatches", fields: [confirmedById], references: [id])
 
@@ -229,8 +233,10 @@ model Match {
   updatedAt DateTime @updatedAt
 
   @@index([gameSystemId, playedAt])
+  @@index([submittedById])
   @@index([playerOneId])
   @@index([playerTwoId])
+  @@index([winnerId])
   @@index([status])
 }
 
@@ -241,26 +247,41 @@ model MatchCommunity {
   communityId String
   seasonId    String?
 
-  // Overall Chapter Elo snapshots
+  status MatchCommunityStatus @default(ACTIVE)
+
+  // Overall community Elo snapshots
   playerOneEloBefore Int?
   playerOneEloAfter  Int?
   playerTwoEloBefore Int?
   playerTwoEloAfter  Int?
 
-  // Chapter-specific faction Elo snapshots
+  // Community-specific faction Elo snapshots
   playerOneFactionEloBefore Int?
   playerOneFactionEloAfter  Int?
   playerTwoFactionEloBefore Int?
   playerTwoFactionEloAfter  Int?
 
+  // Season Elo snapshots
   playerOneSeasonEloBefore Int?
-  playerOneSeasonEloAfter Int?
+  playerOneSeasonEloAfter  Int?
   playerTwoSeasonEloBefore Int?
-  playerTwoSeasonEloAfter Int?
+  playerTwoSeasonEloAfter  Int?
 
-  match     Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  // Moderation / audit trail
+  voidedAt   DateTime?
+  voidedById String?
+  voidReason String?
+
+  match     Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
   community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  season    Season?   @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  season    Season? @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+
+  voidedBy User? @relation(
+    "VoidedMatchCommunities",
+    fields: [voidedById],
+    references: [id],
+    onDelete: SetNull
+  )
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -268,6 +289,8 @@ model MatchCommunity {
   @@unique([matchId, communityId])
   @@index([communityId])
   @@index([seasonId])
+  @@index([status])
+  @@index([voidedById])
 }
 
 model ChapterInvite {
@@ -289,11 +312,11 @@ model ChapterInvite {
 }
 
 model DiscordChapter {
-  id          String    @id
+  id String @id
 
   communityId String
   community   Community @relation(fields: [communityId], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
