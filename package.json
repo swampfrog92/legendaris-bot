@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node app.js",
+    "start": "node dist/app.js",
     "register": "node commands.js",
     "dev": "nodemon app.js",
     "postinstall": "prisma generate"
