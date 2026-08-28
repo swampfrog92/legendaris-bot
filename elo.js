@@ -173,7 +173,7 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
             }
         });
         console.log(newMatch);
-        
+
         // Updates the lifetime wins/loss/tie for both players.
         const playerOneMatchDelta = {
             winsDelta: playerVP > oppVP ? 1 : 0,
@@ -287,7 +287,7 @@ export async function createMatch(res, req, prisma){
         const playerTwo = (await prisma.communityMember.findFirst({where: {userId: oppUserDbId, communityId}}));
 
         // Updates the specific Elo for the faction played. 
-        const factionEloUpdate = updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
+        const factionEloUpdate = await updateFactionElo(prisma, playerOne, playerTwo, yourVP, oppVP, yourFaction, oppFaction);
 
         // Updates the community Elo for the players.
         updateElo(prisma, playerOne, playerTwo, yourVP, oppVP, matchId, factionEloUpdate, req);
