@@ -1,8 +1,8 @@
 {
-  "name": "discord-getting-started",
+  "name": "Legendaris Bot",
   "private": true,
   "version": "1.0.0",
-  "description": "Discord example app",
+  "description": "Legendaris Bot",
   "main": "app.js",
   "type": "module",
   "engines": {
@@ -14,7 +14,7 @@
     "dev": "nodemon app.js",
     "postinstall": "prisma generate"
   },
-  "author": "Shay DeWael",
+  "author": "Logan Holland",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -26,6 +26,7 @@
     "prisma": "^6.19.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.0"
+    "nodemon": "^3.0.0",
+    "typescript": "^7.0.2"
   }
 }
