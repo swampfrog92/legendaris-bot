@@ -29,6 +29,7 @@ export async function findRecentMatchesForDisplay(prisma: PrismaClient, userId: 
             take: 5
         });
 
+        console.log(matches);
         for(let i = 0; i < matches.length; i++){
             msg += `${i + 1}. <@${matches[i]!.playerOne.discordId}> vs <@${matches[i]!.playerTwo.discordId}>\n`;
         }
