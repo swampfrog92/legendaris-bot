@@ -9,7 +9,7 @@
     "node": ">=18.x"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r generated dist/generated",
     "start": "node dist/app.js",
     "register": "node commands.js",
     "dev": "nodemon app.js",
