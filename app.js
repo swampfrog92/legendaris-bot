@@ -13,7 +13,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Pool } from 'pg';
 import { faction_id } from './utils.js';
 import { slugify } from './utils.js';
-import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request, leaderboard_request, link_request, stats_request, create_season_request, season_stats_request } from './slash_commands.js';
+import { rank_request, create_chapter_request, info_request, help_request, results_request, notify_request, join_request, leaderboard_request, link_request, stats_request, create_season_request, season_stats_request, history_request } from './slash_commands.js';
 import { factionAutocomplete } from './factions.js';
 
 const app = express();
@@ -64,6 +64,9 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     if (name === 'help') {
       return help_request(res);
+    }
+    else if (name === 'history') {
+      return history_request(res, req);
     }
     else if (name === 'info') {
       return info_request(res, req);

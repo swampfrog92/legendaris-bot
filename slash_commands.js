@@ -13,9 +13,10 @@ import { notify_user_of_match } from './messages.js';
 import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
-import { ifJoined } from './search.js';
+import { ifJoined, findUserIdFromDiscordId } from './search.js';
 import { createSeason, getActiveSeason, resetSeasonElo } from './season.js';
 import { ifValidFaction } from './factions.js';
+import { findRecentMatchesForDisplay } from './matches.ts';
 
 export const prisma = new PrismaClient();
 
@@ -261,6 +262,23 @@ export async function leaderboard_request(res, req){
 
 export function help_request(res) {
     
+    return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+        flags: InteractionResponseFlags.IS_COMPONENTS_V2 | InteractionResponseFlags.EPHEMERAL,
+          components: [
+            {
+              type: MessageComponentTypes.TEXT_DISPLAY,
+              content: helpMessage
+            }
+          ]
+        },
+    });
+}
+
+export async function history_request(res, req) {
+    const userId = await findUserIdFromDiscordId(prisma, req.body.member?.user?.id ?? req.body.user?.id);
+    const msg = await findRecentMatchesForDisplay(prisma, userId);
     return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {

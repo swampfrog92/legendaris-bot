@@ -31,3 +31,15 @@ export async function ifJoined(prisma, discordId, communityId){
         return false;
     }
 }
+
+export async function findUserIdFromDiscordId(prisma, discordId){
+    try{
+        return await prisma.user.findUnique({
+            where: {
+                discordId
+            }
+        }).id;
+    } catch(err){
+        console.log("Error while finding User ID", err);
+    }
+}
