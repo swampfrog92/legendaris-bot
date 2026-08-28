@@ -16,7 +16,7 @@ import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
 import { ifJoined, findUserIdFromDiscordId } from './search.js';
 import { createSeason, getActiveSeason, resetSeasonElo } from './season.js';
 import { ifValidFaction } from './factions.js';
-import { findRecentMatchesForDisplay } from './matches.ts';
+import { findRecentMatchesForDisplay } from './matches.js';
 
 export const prisma = new PrismaClient();
 
