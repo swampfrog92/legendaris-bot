@@ -153,7 +153,7 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
         const activeSeason = await getActiveSeason(prisma, communityId);
 
         // Creates a new matchCommunity entry.
-        await prisma.matchCommunity.create({
+        const newMatch = await prisma.matchCommunity.create({
             data: {
                 matchId,
                 communityId,
@@ -172,6 +172,8 @@ export async function updateElo(prisma, playerOne, playerTwo, playerVP, oppVP, m
                 seasonId: activeSeason.id,
             }
         });
+        console.log(newMatch);
+        
         // Updates the lifetime wins/loss/tie for both players.
         const playerOneMatchDelta = {
             winsDelta: playerVP > oppVP ? 1 : 0,
