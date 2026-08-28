@@ -286,7 +286,7 @@ export async function history_request(res, req) {
           components: [
             {
               type: MessageComponentTypes.TEXT_DISPLAY,
-              content: helpMessage
+              content: msg
             }
           ]
         },
