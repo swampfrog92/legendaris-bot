@@ -10,7 +10,7 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo, createMatch } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage, newSeasonSnapshotFailedMessage } from './text.js';
+import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage, } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
 import { ifJoined, findUserIdFromDiscordId } from './search.js';
