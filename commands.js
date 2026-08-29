@@ -45,7 +45,7 @@ async function createCommands(){
   };
 
   const RESULTS_COMMAND = {
-    name: 'results',
+    name: 'submit',
     description: 'Submit and publish the results of a recent game',
     type: 1,
     integration_types: [0,1],

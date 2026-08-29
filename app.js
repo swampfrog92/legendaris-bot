@@ -95,7 +95,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       return link_request(res, req);
     }
 
-    else if (name === 'results') {
+    else if (name === 'submit') {
       return results_request(res, req, client);
     }
     
