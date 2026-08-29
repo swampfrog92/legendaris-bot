@@ -186,8 +186,25 @@ model Season {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  snapshots SeasonSnapshot[]
+
   @@unique([communityId, name])
   @@index([communityId, startDate])
+}
+
+model SeasonSnapshot {
+  id                String @id @default(cuid())
+
+  seasonId          String
+  communityMemberId String
+
+  seasonElo         Int
+  rank              Int?
+
+  season            Season          @relation(fields: [seasonId], references: [id])
+  communityMember   CommunityMember @relation(fields: [communityMemberId], references: [id])
+
+  @@unique([seasonId, communityMemberId])
 }
 
 model Match {
