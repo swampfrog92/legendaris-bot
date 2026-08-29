@@ -302,10 +302,12 @@ export async function link_request(res, req) {
 
         await prisma.discordChapter.upsert({
             where: {
+                id: guildId
+            },
+            update: {
                 id: guildId,
                 communityId
             },
-            update: {},
             create: {
                 id: guildId,
                 communityId
