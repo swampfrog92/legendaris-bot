@@ -279,6 +279,8 @@ export async function createMatch(res, req, prisma){
                 winnerId: winnerDbId,
                 playerOneFactionId: yourFaction,
                 playerTwoFactionId: oppFaction,
+                playerOneScore: yourVP,
+                playerTwoScore: oppVP,
                 playedAt: new Date(),
             }
         }))?.id;
