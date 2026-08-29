@@ -54,8 +54,6 @@ INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updat
 
 INSERT INTO "Faction" ("id", "gameSystemId", "name", "slug", "createdAt", "updatedAt") VALUES ('nc', 'wh40k', 'Necrons', 'necrons', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO "Community" ("id", "gameSystemId", "name", "slug", "description", "createdAt", "updatedAt") VALUES ('test', 'wh40k', 'Test Chapter', 'test-chapter', "This is a test chapter", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-
 INSERT INTO "User" ("id", "discordId", "discordUsername", "createdAt", "updatedAt") VALUES ('-1', '-1', 'TIE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
