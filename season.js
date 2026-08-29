@@ -51,16 +51,14 @@ export async function createSeasonSnapshots(prisma, communityId){
         const activeSeason = await getActiveSeason(prisma, communityId);
         const community = await prisma.community.findMany({ where: { id: communityId}, inlcude: { members: true, }});
 
-        if(activeSeason && community){
-            community.members.map((member) => (
-                await prisma.seasonSnapshot.create({
-                    data: {
-                        seasonId: activeSeason.id,
-                        communityMemberId: member.id,
-                        seasonElo: member.seasonElo
-                    }
-                })
-            ));
+        if (activeSeason && community) {
+            await prisma.seasonSnapshot.createMany({
+                data: community.members.map((member) => ({
+                    seasonId: activeSeason.id,
+                    communityMemberId: member.id,
+                    seasonElo: member.seasonElo
+                }))
+            });
         }
 
     }catch(err){
