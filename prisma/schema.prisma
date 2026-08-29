@@ -119,6 +119,8 @@ model CommunityMember {
 
   playerFactions PlayerFaction[]
 
+  snapshots SeasonSnapshot []
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
