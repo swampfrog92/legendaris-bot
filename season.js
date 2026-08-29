@@ -49,7 +49,7 @@ export async function resetSeasonElo(prisma, communityId){
 export async function createSeasonSnapshots(prisma, communityId){
     try{
         const activeSeason = await getActiveSeason(prisma, communityId);
-        const community = await prisma.community.findMany({ where: { id: communityId}, inlcude: { members: true, }});
+        const community = await prisma.community.findUnique({ where: { id: communityId}, include: { members: true, }});
 
         if (activeSeason && community) {
             await prisma.seasonSnapshot.createMany({
