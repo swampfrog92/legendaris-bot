@@ -10,11 +10,11 @@ import {
 } from 'discord-interactions';
 import { adjustEloForVictory, adjustEloForDefeat, adjustEloForTie, sortLeaderboard, findRank, findElo, updateFactionElo, updateElo, createMatch } from './elo.js';
 import { notify_user_of_match } from './messages.js';
-import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage } from './text.js';
+import { helpMessage, errorUpdatingEloMessage, infoErrorMessage, newSeasonMessage, userNotJoinedMessage, newSeasonSnapshotFailedMessage } from './text.js';
 import { getChapter } from './chapter.js';
 import { getFactionStats, getRecord, getSeasonStats } from './stats.js';
 import { ifJoined, findUserIdFromDiscordId } from './search.js';
-import { createSeason, getActiveSeason, resetSeasonElo } from './season.js';
+import { createSeason, getActiveSeason, resetSeasonElo, createSeasonSnapshots } from './season.js';
 import { ifValidFaction } from './factions.js';
 import { findRecentMatchesForDisplay } from './matches.js';
 
@@ -535,7 +535,10 @@ export async function join_request(res, req) {
 }
 
 export async function create_season_request(res, req) {
+
+    await createSeasonSnapshots(prisma, (await getChapter(req, prisma)));
     await resetSeasonElo(prisma, (await getChapter(req, prisma)));
+
     if (createSeason(prisma, req.body.data.options?.find(opt => opt.name === 'season_name')?.value, (await getChapter(req, prisma)))){
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

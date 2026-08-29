@@ -45,3 +45,25 @@ export async function resetSeasonElo(prisma, communityId){
         return false;
     }
 }
+
+export async function createSeasonSnapshots(prisma, communityId){
+    try{
+        const activeSeason = await getActiveSeason(prisma, communityId);
+        const community = await prisma.community.findMany({ where: { id: communityId}, inlcude: { members: true, }});
+
+        if(activeSeason && community){
+            community.members.map((member) => (
+                await prisma.seasonSnapshot.create({
+                    data: {
+                        seasonId: activeSeason.id,
+                        communityMemberId: member.id,
+                        seasonElo: member.seasonElo
+                    }
+                })
+            ));
+        }
+
+    }catch(err){
+        console.error("Error while creating season snapshots", err);
+    }
+}
