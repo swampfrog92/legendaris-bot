@@ -230,9 +230,7 @@ export async function leaderboard_request(res, req){
                     select: {
                         displayName: true,
                         seasonElo: true,
-                        userId: true
-                    },
-                    include: {
+                        userId: true,
                         user: true
                     },
                     orderBy: {
