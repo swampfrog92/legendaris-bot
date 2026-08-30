@@ -232,6 +232,9 @@ export async function leaderboard_request(res, req){
                         seasonElo: true,
                         userId: true
                     },
+                    include: {
+                        user: true
+                    },
                     orderBy: {
                         seasonElo: "desc"
                     }
@@ -240,7 +243,7 @@ export async function leaderboard_request(res, req){
         });
         const leaderboardLength = community.members.length > requestedLength ? requestedLength : community.members.length;
         for(let i = 0; i < leaderboardLength; i++){
-            msg += `${i + 1}. ${community.members[i].displayName} --- ${community.members[i].seasonElo}\n`;
+            msg += `${i + 1}. ${community.members[i].displayName ?? community.members[i].user.discordUsername} --- ${community.members[i].seasonElo}\n`;
         }
 
         return res.send({
